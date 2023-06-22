@@ -4,23 +4,23 @@ let React;
 let ReactDOM;
 let ReactTestUtils;
 
-let container = null;
-
 describe('useState hook', () => {
+  // ???
+  let containerForReactComponent = null;
+
   beforeEach(() => {
-    jest.resetModules();
+    jest.resetModules(); // ???
     React = require('react');
     ReactDOM = require('react-dom');
     ReactTestUtils = require('react-dom/test-utils');
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
-    window.__matrixnorm_container = container;
+    containerForReactComponent = document.createElement('div');
+    document.body.appendChild(containerForReactComponent);
   });
 
   afterEach(() => {
-    document.body.removeChild(container);
-    container = null;
+    document.body.removeChild(containerForReactComponent);
+    containerForReactComponent = null;
   });
 
   it('mount', () => {
@@ -28,24 +28,17 @@ describe('useState hook', () => {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
 
-      const incrementCount = () => {
-        console.log('=== incrementCount ===');
-        setCount(prev => prev + 1);
-      };
-
       return (
-        <div>
-          <button onClick={incrementCount}>+</button>
-          <span>{count}</span>
-        </div>
+        <span>{count}</span>
       );
     }
 
     console.log('=== START INITIAL RENDER ===');
-    
+
     ReactTestUtils.act(() => {
-      ReactDOM.render(<App />, container);
+      ReactDOM.render(<App />, containerForReactComponent);
     });
+    
     console.log('=== DONE INITIAL RENDER ===');
   });
 
@@ -68,20 +61,19 @@ describe('useState hook', () => {
     }
 
     let __log = console.log;
-    console.log = () => {};
+    console.log = () => { };
 
     ReactTestUtils.act(() => {
       ReactDOM.render(<App />, container);
     });
 
     console.log = __log;
-    window.__MATRIX_NORM_LOG_NAMESPACES = ['fiber_tree'];
     console.log('=== UPDATE ===');
 
     ReactTestUtils.act(() => {
       container
         .querySelector('button')
-        .dispatchEvent(new MouseEvent('click', {bubbles: true}));
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
   });
 

@@ -24,6 +24,7 @@ import type {
 import type {OffscreenInstance} from './ReactFiberOffscreenComponent';
 import type {RenderTaskFn} from './ReactFiberRootScheduler';
 
+import * as matrixnorm from 'matrixnorm'
 import {
   replayFailedUnitOfWorkWithInvokeGuardedCallback,
   enableCreateEventHandleAPI,
@@ -1970,6 +1971,7 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 function workLoopSync() {
   // Perform work without checking if we need to yield between fiber.
   while (workInProgress !== null) {
+    console.log(matrixnorm.fiberInfo(workInProgress));
     performUnitOfWork(workInProgress);
   }
 }

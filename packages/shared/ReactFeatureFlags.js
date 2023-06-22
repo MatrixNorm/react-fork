@@ -12,7 +12,6 @@
 //
 // Flags that can likely be deleted or landed without consequences
 // -----------------------------------------------------------------------------
-
 export const enableComponentStackLocations = true;
 
 // -----------------------------------------------------------------------------
