@@ -24,7 +24,7 @@ import type {
 import type {OffscreenInstance} from './ReactFiberOffscreenComponent';
 import type {RenderTaskFn} from './ReactFiberRootScheduler';
 
-import * as matrixnorm from 'matrixnorm'
+import * as matrixnorm from 'matrixnorm';
 import {
   replayFailedUnitOfWorkWithInvokeGuardedCallback,
   enableCreateEventHandleAPI,
@@ -1971,7 +1971,6 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 function workLoopSync() {
   // Perform work without checking if we need to yield between fiber.
   while (workInProgress !== null) {
-    console.log(matrixnorm.fiberInfo(workInProgress));
     performUnitOfWork(workInProgress);
   }
 }
@@ -2251,6 +2250,8 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
+  console.log("after beginWork", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+                     `next: ${matrixnorm.fiberInfo(next)}`);
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2476,7 +2477,6 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
     }
     resetCurrentDebugFiberInDEV();
-
     if (next !== null) {
       // Completing this fiber spawned new work. Work on that next.
       workInProgress = next;
@@ -2485,10 +2485,13 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
 
     const siblingFiber = completedWork.sibling;
     if (siblingFiber !== null) {
+      console.log(`${matrixnorm.fiberInfo(workInProgress)} has siblings
+                   ${matrixnorm.fiberInfo(siblingFiber)}`);
       // If there is more work to do in this returnFiber, do that next.
       workInProgress = siblingFiber;
       return;
     }
+    console.log(`${matrixnorm.fiberInfo(workInProgress)} has no siblings`);
     // Otherwise, return to the parent
     // $FlowFixMe[incompatible-type] we bail out when we get a null
     completedWork = returnFiber;

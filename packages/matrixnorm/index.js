@@ -22,7 +22,7 @@ export const getFiberType = fiber => {
   }
 };
 
-export const fiberInfo = (fiber: Fiber) => {
+export const fiberInfo = (fiber: $ReadOnly<Fiber>): void => {
   return fiber ? `Fib <tag=${fiber.tag} ${getFiberType(fiber)}>` : 'Fib <NULL>';
 };
 

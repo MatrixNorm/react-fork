@@ -29,6 +29,7 @@ import {isOffscreenManual} from './ReactFiberOffscreenComponent';
 import type {OffscreenState} from './ReactFiberOffscreenComponent';
 import type {TracingMarkerInstance} from './ReactFiberTracingMarkerComponent';
 import type {Cache} from './ReactFiberCacheComponent';
+import * as matrixnorm from 'matrixnorm';
 import {
   enableLegacyHidden,
   enableHostSingletons,
@@ -225,7 +226,11 @@ function appendAllChildren(
     // children to find all the terminal nodes.
     let node = workInProgress.child;
     while (node !== null) {
+      console.log("append 1", 
+        `node: ${matrixnorm.fiberInfo(node)}`,
+        `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
       if (node.tag === HostComponent || node.tag === HostText) {
+        console.log(`DOM append ${node.stateNode} to ${parent}`)
         appendInitialChild(parent, node.stateNode);
       } else if (
         node.tag === HostPortal ||
@@ -238,6 +243,7 @@ function appendAllChildren(
         // the portal directly.
         // If we have a HostSingleton it will be placed independently
       } else if (node.child !== null) {
+        console.log('***');
         node.child.return = node;
         node = node.child;
         continue;
@@ -249,11 +255,13 @@ function appendAllChildren(
       while (node.sibling === null) {
         // $FlowFixMe[incompatible-use] found when upgrading Flow
         if (node.return === null || node.return === workInProgress) {
+          console.log('&&&')
           return;
         }
         node = node.return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
+      console.log("append 2", matrixnorm.fiberInfo(node));
       node.sibling.return = node.return;
       node = node.sibling;
     }
@@ -1302,6 +1310,9 @@ function completeWork(
             currentHostContext,
             workInProgress,
           );
+          console.log("before appendAll",
+            `wip: ${matrixnorm.fiberInfo(workInProgress)}`, 
+            instance.toString());
           appendAllChildren(instance, workInProgress, false, false);
           workInProgress.stateNode = instance;
 
