@@ -37,7 +37,7 @@ let workInProgress: Fiber | null = null;
 while (workInProgress !== null) {
   const current = workInProgress.alternate;
   const next = beginWork(current, workInProgress);
-  // @@@ workInProgress, next
+  // log workInProgress, next
   if (next === null) {
     // Attempt to complete the current unit of work, then move to the next
     // sibling. If there are no more siblings, return to the parent fiber.
@@ -54,7 +54,7 @@ while (workInProgress !== null) {
             break;
         }
         const siblingFiber = workInProgress.sibling;
-        // $$$ workInProgress, siblingFiber
+        // log workInProgress, siblingFiber
         if (siblingFiber !== null) {
             // If there is more work to do in this returnFiber, do that next.
             workInProgress = siblingFiber;
@@ -112,7 +112,7 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
           currentHostContext,
           workInProgress,
         );
-        // !!! workInProgress, instance
+        // log workInProgress, instance
         appendAllChildren(instance, workInProgress);
         workInProgress.stateNode = instance;
       }
@@ -148,5 +148,18 @@ function appendAllChildren(parent: Instance, workInProgress: Fiber) {
     node.sibling.return = node.return;
     node = node.sibling;
   }
+}
+```
+
+```javascript
+function appendAllChildrenRec(parent: Instance, workInProgress: Fiber) {
+  let node = workInProgress.child;
+  if (node.tag === HostComponent || node.tag === HostText) {
+      parent.appendChild(node.stateNode);
+    } else if (node.child !== null) {
+      node.child.return = node;
+      node = node.child;
+      continue;
+    }
 }
 ```

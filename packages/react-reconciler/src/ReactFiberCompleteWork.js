@@ -226,11 +226,11 @@ function appendAllChildren(
     // children to find all the terminal nodes.
     let node = workInProgress.child;
     while (node !== null) {
-      console.log("append 1", 
+      console.log("completeWork::append 1", 
         `node: ${matrixnorm.fiberInfo(node)}`,
         `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
       if (node.tag === HostComponent || node.tag === HostText) {
-        console.log(`DOM append ${node.stateNode} to ${parent}`)
+        console.log(`completeWork::DOM append ${node.stateNode} to ${parent}`)
         appendInitialChild(parent, node.stateNode);
       } else if (
         node.tag === HostPortal ||
@@ -243,7 +243,7 @@ function appendAllChildren(
         // the portal directly.
         // If we have a HostSingleton it will be placed independently
       } else if (node.child !== null) {
-        console.log('***');
+        console.log('completeWork::***');
         node.child.return = node;
         node = node.child;
         continue;
@@ -255,13 +255,13 @@ function appendAllChildren(
       while (node.sibling === null) {
         // $FlowFixMe[incompatible-use] found when upgrading Flow
         if (node.return === null || node.return === workInProgress) {
-          console.log('&&&')
+          console.log('completeWork::&&&')
           return;
         }
         node = node.return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
-      console.log("append 2", matrixnorm.fiberInfo(node));
+      console.log("completeWork::append 2", matrixnorm.fiberInfo(node));
       node.sibling.return = node.return;
       node = node.sibling;
     }
@@ -1310,7 +1310,7 @@ function completeWork(
             currentHostContext,
             workInProgress,
           );
-          console.log("before appendAll",
+          console.log("completeWork::before appendAll",
             `wip: ${matrixnorm.fiberInfo(workInProgress)}`, 
             instance.toString());
           appendAllChildren(instance, workInProgress, false, false);
