@@ -1338,12 +1338,13 @@ export function performSyncWorkOnRoot(root: FiberRoot): null {
   const finishedWork: Fiber = (root.current.alternate: any);
   root.finishedWork = finishedWork;
   root.finishedLanes = lanes;
+  
   commitRoot(
     root,
     workInProgressRootRecoverableErrors,
     workInProgressTransitions,
   );
-
+  
   // Before exiting, make sure there's a callback scheduled for the next
   // pending level.
   ensureRootIsScheduled(root);
@@ -1962,7 +1963,6 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 
   // It's safe to process the queue now that the render phase is complete.
   finishQueueingConcurrentUpdates();
-
   return workInProgressRootExitStatus;
 }
 
@@ -2242,6 +2242,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   const current = unitOfWork.alternate;
   setCurrentDebugFiberInDEV(unitOfWork);
 
+  console.log("before beginWork", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`);
   let next;
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
@@ -2250,8 +2251,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log("after beginWork", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`,
-                     `next: ${matrixnorm.fiberInfo(next)}`);
+  console.log("after beginWork", `next: ${matrixnorm.fiberInfo(next)}`);
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2467,6 +2467,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     const returnFiber = completedWork.return;
 
     setCurrentDebugFiberInDEV(completedWork);
+    console.log("before completeWork", matrixnorm.fiberInfo(completedWork))
     let next;
     if (!enableProfilerTimer || (completedWork.mode & ProfileMode) === NoMode) {
       next = completeWork(current, completedWork, renderLanes);
@@ -2476,6 +2477,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       // Update render duration assuming we didn't error.
       stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
     }
+    console.log("after completeWork", `next: ${matrixnorm.fiberInfo(next)}`)
     resetCurrentDebugFiberInDEV();
     if (next !== null) {
       // Completing this fiber spawned new work. Work on that next.
@@ -2485,13 +2487,13 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
 
     const siblingFiber = completedWork.sibling;
     if (siblingFiber !== null) {
-      console.log(`${matrixnorm.fiberInfo(workInProgress)} has siblings
+      console.log(`${matrixnorm.fiberInfo(completedWork)} has sibling
                    ${matrixnorm.fiberInfo(siblingFiber)}`);
       // If there is more work to do in this returnFiber, do that next.
       workInProgress = siblingFiber;
       return;
     }
-    console.log(`${matrixnorm.fiberInfo(workInProgress)} has no siblings`);
+    console.log(`${matrixnorm.fiberInfo(completedWork)} has no siblings`);
     // Otherwise, return to the parent
     // $FlowFixMe[incompatible-type] we bail out when we get a null
     completedWork = returnFiber;
@@ -2621,7 +2623,7 @@ function commitRootImpl(
     flushPassiveEffects();
   } while (rootWithPendingPassiveEffects !== null);
   flushRenderPhaseStrictModeWarningsInDEV();
-
+  
   if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
     throw new Error('Should not already be working.');
   }
@@ -2676,7 +2678,7 @@ function commitRootImpl(
   root.callbackNode = null;
   root.callbackPriority = NoLane;
   root.cancelPendingCommit = null;
-
+  
   // Check which lanes no longer have any work scheduled on them, and mark
   // those as finished.
   let remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes);
@@ -2777,10 +2779,10 @@ function commitRootImpl(
       // Updates scheduled during ref detachment should also be flagged.
       rootCommittingMutationOrLayoutEffects = root;
     }
-
+    console.log("before commitMutationEffects");
     // The next phase is the mutation phase, where we mutate the host tree.
     commitMutationEffects(root, finishedWork, lanes);
-
+    console.log("after commitMutationEffects");
     if (enableCreateEventHandleAPI) {
       if (shouldFireAfterActiveInstanceBlur) {
         afterActiveInstanceBlur();

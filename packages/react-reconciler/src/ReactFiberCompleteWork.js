@@ -226,9 +226,9 @@ function appendAllChildren(
     // children to find all the terminal nodes.
     let node = workInProgress.child;
     while (node !== null) {
-      console.log("completeWork::append 1", 
-        `node: ${matrixnorm.fiberInfo(node)}`,
-        `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
+      //console.log("completeWork::append 1", 
+      //  `node: ${matrixnorm.fiberInfo(node)}`,
+      //  `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
       if (node.tag === HostComponent || node.tag === HostText) {
         console.log(`completeWork::DOM append ${node.stateNode} to ${parent}`)
         appendInitialChild(parent, node.stateNode);
@@ -243,25 +243,26 @@ function appendAllChildren(
         // the portal directly.
         // If we have a HostSingleton it will be placed independently
       } else if (node.child !== null) {
-        console.log('completeWork::***');
+        //console.log('completeWork::***');
         node.child.return = node;
         node = node.child;
         continue;
       }
       if (node === workInProgress) {
+        console.log("faggot ".repeat(100))
         return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
       while (node.sibling === null) {
         // $FlowFixMe[incompatible-use] found when upgrading Flow
         if (node.return === null || node.return === workInProgress) {
-          console.log('completeWork::&&&')
+          //console.log('completeWork::&&&')
           return;
         }
         node = node.return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
-      console.log("completeWork::append 2", matrixnorm.fiberInfo(node));
+      //console.log("completeWork::append 2", matrixnorm.fiberInfo(node));
       node.sibling.return = node.return;
       node = node.sibling;
     }

@@ -6,7 +6,7 @@ let ReactTestUtils;
 
 describe('useState hook', () => {
   // ???
-  let containerForReactComponent = null;
+  let containerForReactComponent= null;
 
   beforeEach(() => {
     jest.resetModules(); // ???

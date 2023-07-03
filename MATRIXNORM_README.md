@@ -37,7 +37,6 @@ let workInProgress: Fiber | null = null;
 while (workInProgress !== null) {
   const current = workInProgress.alternate;
   const next = beginWork(current, workInProgress);
-  // log workInProgress, next
   if (next === null) {
     // Attempt to complete the current unit of work, then move to the next
     // sibling. If there are no more siblings, return to the parent fiber.
@@ -54,7 +53,6 @@ while (workInProgress !== null) {
             break;
         }
         const siblingFiber = workInProgress.sibling;
-        // log workInProgress, siblingFiber
         if (siblingFiber !== null) {
             // If there is more work to do in this returnFiber, do that next.
             workInProgress = siblingFiber;
@@ -129,13 +127,14 @@ function appendAllChildren(parent: Instance, workInProgress: Fiber) {
   // children to find all the terminal nodes.
   let node = workInProgress.child;
   while (node !== null) {
-    if (node.tag === HostComponent || node.tag === HostText) {
+    if (node.tag === HostComponent) {
       parent.appendChild(node.stateNode);
     } else if (node.child !== null) {
       node.child.return = node;
       node = node.child;
       continue;
     }
+    // на всякий случай?
     if (node === workInProgress) {
       return;
     }
@@ -152,14 +151,62 @@ function appendAllChildren(parent: Instance, workInProgress: Fiber) {
 ```
 
 ```javascript
-function appendAllChildrenRec(parent: Instance, workInProgress: Fiber) {
-  let node = workInProgress.child;
-  if (node.tag === HostComponent || node.tag === HostText) {
+let node = workInProgress.child;
+
+function appendAllChildrenRec(parent, node) {
+  if (node !== null) {
+    if (node.tag === HostComponent) {
+      parent.appendChild(node.stateNode);
+    } else if (node.child !== null) {
+      node.child.return = node;
+      appendAllChildrenRec(parent, node.child);
+    }
+    if (node.sibling !== null) {
+      appendAllChildrenRec(parent, node.sibling);
+    }
+  }
+}
+```
+
+```javascript
+let node = workInProgress.child;
+
+function appendAllChildrenRec(parent, workInProgress) {
+  while (node !== null) {
+    if (node.tag === HostComponent) {
+      parent.appendChild(node.stateNode);
+    } else if (node.child !== null) {
+      node.child.return = node;
+      appendAllChildrenRec(parent, node.child);
+    }
+    if (node.sibling === null) {
+      break;      
+    }
+    node = node.sibling;
+  }
+}
+```
+
+```javascript
+let node = workInProgress.child;
+
+function appendAllChildrenIter(parent, workInProgress) {
+  while (node !== null) {
+    if (node.tag === HostComponent) {
       parent.appendChild(node.stateNode);
     } else if (node.child !== null) {
       node.child.return = node;
       node = node.child;
       continue;
     }
+    while (node.sibling === null) {
+      if (node.return === workInProgress) {
+        return;
+      }
+      node = node.return;
+    }
+    node.sibling.return = node.return;
+    node = node.sibling;
+  }
 }
 ```
