@@ -29,21 +29,23 @@ $ yarn test ./packages/matrixnorm/__tests__/useState-test.js -t mount
 
 ## Run test with debugger
 
+XXX
+
+## Algo for building fiber tree
+
 ```javascript
 //
 let workInProgressRoot: FiberRoot | null = null;
 let workInProgress: Fiber | null = null;
 
 while (workInProgress !== null) {
+  // The current, flushed, state of this fiber is the alternate.
   const current = workInProgress.alternate;
   const next = beginWork(current, workInProgress);
   if (next === null) {
     // Attempt to complete the current unit of work, then move to the next
     // sibling. If there are no more siblings, return to the parent fiber.
     do {
-        // The current, flushed, state of this fiber is the alternate. Ideally
-        // nothing should rely on this, but relying on it here means that we don't
-        // need an additional field on the work in progress.
         const current = workInProgress.alternate;
         const returnFiber = workInProgress.return;
         const next = completeWork(current, workInProgress);
@@ -121,6 +123,8 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
 }
 ```
 
+## Building element tree fromb bottom to top
+
 ```javascript
 function appendAllChildren(parent: Instance, workInProgress: Fiber) {
   // We only have the top Fiber that was created but we need recurse down its
@@ -149,6 +153,9 @@ function appendAllChildren(parent: Instance, workInProgress: Fiber) {
   }
 }
 ```
+
+It's recursive variant
+----------------------
 
 ```javascript
 let node = workInProgress.child;
