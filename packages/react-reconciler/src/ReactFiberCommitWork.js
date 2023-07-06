@@ -1807,7 +1807,6 @@ function getHostSibling(fiber: Fiber): ?Instance {
 }
 
 function commitPlacement(finishedWork: Fiber): void {
-  console.log('commitPlacement', matrixnorm.fiberInfo(finishedWork));
   if (!supportsMutation) {
     return;
   }
@@ -1854,9 +1853,7 @@ function commitPlacement(finishedWork: Fiber): void {
     case HostPortal: {
       const parent: Container = parentFiber.stateNode.containerInfo;
       const before = getHostSibling(finishedWork);
-      console.log("DOM:", document.body.innerHTML);
       insertOrAppendPlacementNodeIntoContainer(finishedWork, before, parent);
-      console.log("DOM:", document.body.innerHTML);
       break;
     }
     default:
@@ -1872,7 +1869,6 @@ function insertOrAppendPlacementNodeIntoContainer(
   before: ?Instance,
   parent: Container,
 ): void {
-  console.log("node", matrixnorm.fiberInfo(node));
   const {tag} = node;
   const isHost = tag === HostComponent || tag === HostText;
   if (isHost) {
@@ -2517,10 +2513,8 @@ function recursivelyTraverseMutationEffects(
 ) {
   // Deletions effects can be scheduled on any fiber type. They need to happen
   // before the children effects hae fired.
-  //console.log(`parentFiber: ${matrixnorm.fiberInfo(parentFiber)}`)
   const deletions = parentFiber.deletions;
   if (deletions !== null) {
-    console.log(`deletions: ${deletions}`);
     for (let i = 0; i < deletions.length; i++) {
       const childToDelete = deletions[i];
       try {
@@ -2535,7 +2529,6 @@ function recursivelyTraverseMutationEffects(
   if (parentFiber.subtreeFlags & MutationMask) {
     let child = parentFiber.child;
     while (child !== null) {
-      //console.log(`child: ${matrixnorm.fiberInfo(child)}`)
       setCurrentDebugFiberInDEV(child);
       commitMutationEffectsOnFiber(child, root, lanes);
       child = child.sibling;
@@ -2551,7 +2544,6 @@ function commitMutationEffectsOnFiber(
   root: FiberRoot,
   lanes: Lanes,
 ) {
-  //console.log("finishedWork: ", matrixnorm.fiberInfo(finishedWork));
   const current = finishedWork.alternate;
   const flags = finishedWork.flags;
 
@@ -3096,7 +3088,6 @@ function commitMutationEffectsOnFiber(
   }
 }
 function commitReconciliationEffects(finishedWork: Fiber) {
-  //console.log("finishedWork: ", matrixnorm.fiberInfo(finishedWork));
   // Placement effects (insertions, reorders) can be scheduled on any fiber
   // type. They needs to happen after the children effects have fired, but
   // before the effects on this fiber have fired.
@@ -3606,7 +3597,6 @@ function commitPassiveMountOnFiber(
   committedLanes: Lanes,
   committedTransitions: Array<Transition> | null,
 ): void {
-  console.log("commitPassiveMountOnFiber");
   // When updating this function, also update reconnectPassiveEffects, which does
   // most of the same things when an offscreen tree goes from hidden -> visible,
   // or when toggling effects inside a hidden tree.

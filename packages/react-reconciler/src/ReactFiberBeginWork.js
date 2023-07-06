@@ -41,6 +41,7 @@ import type {TracingMarkerInstance} from './ReactFiberTracingMarkerComponent';
 import type {TransitionStatus} from './ReactFiberConfig';
 import type {Hook} from './ReactFiberHooks';
 
+import * as matrixnorm from 'matrixnorm';
 import checkPropTypes from 'shared/checkPropTypes';
 import {
   markComponentRenderStarted,
@@ -4005,6 +4006,7 @@ function beginWork(
   workInProgress: Fiber,
   renderLanes: Lanes,
 ): Fiber | null {
+  console.log(`wip: ${matrixnorm.fiberInfo(workInProgress)}, cur: ${matrixnorm.fiberInfo(current)}`);
   if (__DEV__) {
     if (workInProgress._debugNeedsRemount && current !== null) {
       // This will restart the begin phase with a new fiber.

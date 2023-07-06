@@ -749,7 +749,6 @@ export function appendChildToContainer(
   container: Container,
   child: Instance | TextInstance,
 ): void {
-  console.log("@@@@@@@@@@@@@@@")
   let parentNode;
   if (container.nodeType === COMMENT_NODE) {
     parentNode = (container.parentNode: any);

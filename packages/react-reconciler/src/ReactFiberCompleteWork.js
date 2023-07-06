@@ -1311,9 +1311,9 @@ function completeWork(
             currentHostContext,
             workInProgress,
           );
-          console.log("completeWork::before appendAll",
-            `wip: ${matrixnorm.fiberInfo(workInProgress)}`, 
-            instance.toString());
+          //console.log("completeWork::before appendAll",
+          // `wip: ${matrixnorm.fiberInfo(workInProgress)}`, 
+          //  instance.toString());
           appendAllChildren(instance, workInProgress, false, false);
           workInProgress.stateNode = instance;
 
