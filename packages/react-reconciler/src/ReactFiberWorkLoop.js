@@ -2241,8 +2241,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   // need an additional field on the work in progress.
   const current = unitOfWork.alternate;
   setCurrentDebugFiberInDEV(unitOfWork);
-
-  console.log("before beginWork", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`);
+  console.log("beginWork>>>", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`);
   let next;
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
@@ -2251,7 +2250,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log("after beginWork", `next: ${matrixnorm.fiberInfo(next)}`);
+  console.log("<<<beginWork", `next: ${matrixnorm.fiberInfo(next)}`);
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2467,7 +2466,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     const returnFiber = completedWork.return;
 
     setCurrentDebugFiberInDEV(completedWork);
-    console.log("before completeWork", matrixnorm.fiberInfo(completedWork))
+    console.log("completeWork>>>", matrixnorm.fiberInfo(completedWork))
     let next;
     if (!enableProfilerTimer || (completedWork.mode & ProfileMode) === NoMode) {
       next = completeWork(current, completedWork, renderLanes);
@@ -2477,7 +2476,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       // Update render duration assuming we didn't error.
       stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
     }
-    console.log("after completeWork", `next: ${matrixnorm.fiberInfo(next)}`)
+    console.log("<<<completeWork", `next: ${matrixnorm.fiberInfo(next)}`)
     resetCurrentDebugFiberInDEV();
     if (next !== null) {
       // Completing this fiber spawned new work. Work on that next.

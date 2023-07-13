@@ -975,6 +975,7 @@ function commitHostComponentMount(finishedWork: Fiber) {
   const type = finishedWork.type;
   const props = finishedWork.memoizedProps;
   const instance: Instance = finishedWork.stateNode;
+  console.log('***', instance.nodeName)
   try {
     commitMount(instance, type, props, finishedWork);
   } catch (error) {
@@ -1837,6 +1838,7 @@ function commitPlacement(finishedWork: Fiber): void {
     }
     case HostComponent: {
       const parent: Instance = parentFiber.stateNode;
+      console.log('***', parent.nodeName)
       if (parentFiber.flags & ContentReset) {
         // Reset the text content of the parent before doing any insertions
         resetTextContent(parent);
@@ -1877,6 +1879,7 @@ function insertOrAppendPlacementNodeIntoContainer(
   const isHost = tag === HostComponent || tag === HostText;
   if (isHost) {
     const stateNode = node.stateNode;
+    console.log('***', stateNode.nodeName)
     if (before) {
       insertInContainerBefore(parent, stateNode, before);
     } else {
@@ -1912,6 +1915,7 @@ function insertOrAppendPlacementNode(
   const isHost = tag === HostComponent || tag === HostText;
   if (isHost) {
     const stateNode = node.stateNode;
+    console.log('***', stateNode.nodeName)
     if (before) {
       insertBefore(parent, stateNode, before);
     } else {
@@ -2551,7 +2555,7 @@ function commitMutationEffectsOnFiber(
   root: FiberRoot,
   lanes: Lanes,
 ) {
-  //console.log("finishedWork: ", matrixnorm.fiberInfo(finishedWork));
+  console.log("commitMutationEffectsOnFiber", matrixnorm.fiberInfo(finishedWork));
   const current = finishedWork.alternate;
   const flags = finishedWork.flags;
 
@@ -2763,6 +2767,7 @@ function commitMutationEffectsOnFiber(
         // during the render phase instead.
         if (finishedWork.flags & ContentReset) {
           const instance: Instance = finishedWork.stateNode;
+          console.log('***', instance.nodeName)
           try {
             resetTextContent(instance);
           } catch (error) {
@@ -2772,6 +2777,7 @@ function commitMutationEffectsOnFiber(
 
         if (flags & Update) {
           const instance: Instance = finishedWork.stateNode;
+          console.log('***', instance.nodeName)
           if (instance != null) {
             // Commit the work prepared earlier.
             const newProps = finishedWork.memoizedProps;

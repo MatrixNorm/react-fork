@@ -33,10 +33,28 @@ export const elementInfo = element => {
     return element.map(el => elementInfo(el));
   }
 
-  const _element = { ...element };
-  _element._owner = fiberInfo(element._owner);
-  return _element;
+  if (typeof element === 'object') { 
+    const _element = { ...element };
+
+    _element._owner = fiberInfo(_element._owner);
+    if (_element.type?.constructor === Function) {
+      _element.type = `func <${_element.type.name}>`
+    }
+
+    let children = _element.props?.children;
+    // && (Array.isArray(children) || Object.isObject(children)
+    if (children ) {
+      _element.props = {..._element.props, children: elementInfo(children)}
+    }
+    return _element;
+  } else {
+    return element
+  }
 };
+
+export const domElementInfo = domElement => {
+  return `DOM elem <${domElement.nodeName}>`
+}
 
 export const getStackTrace = depth => {
   let obj = {};
@@ -61,14 +79,4 @@ export const getStackTrace = depth => {
     .join('\n');
 
   return '\n\n' + stackStr;
-};
-
-export const log = namespace => {
-  const _NAMESPACES = window.__MATRIX_NORM_LOG_NAMESPACES;
-
-  if (_NAMESPACES && _NAMESPACES.includes(namespace)) {
-    return console.log;
-  } else {
-    return () => { };
-  }
 };

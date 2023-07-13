@@ -221,16 +221,19 @@ function appendAllChildren(
   needsVisibilityToggle: boolean,
   isHidden: boolean,
 ) {
+  console.log("appendAllChildren", matrixnorm.domElementInfo(parent),
+    `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
   if (supportsMutation) {
     // We only have the top Fiber that was created but we need recurse down its
     // children to find all the terminal nodes.
     let node = workInProgress.child;
     while (node !== null) {
-      //console.log("completeWork::append 1", 
-      //  `node: ${matrixnorm.fiberInfo(node)}`,
-      //  `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
       if (node.tag === HostComponent || node.tag === HostText) {
-        console.log(`completeWork::DOM append ${node.stateNode} to ${parent}`)
+        {
+          let info = matrixnorm.domElementInfo
+          console.log(`append ${info(node.stateNode)} to ${info(parent)}`)
+        }
+        // parent.appendChild(node.stateNode)
         appendInitialChild(parent, node.stateNode);
       } else if (
         node.tag === HostPortal ||
@@ -249,20 +252,17 @@ function appendAllChildren(
         continue;
       }
       if (node === workInProgress) {
-        console.log("faggot ".repeat(100))
         return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
       while (node.sibling === null) {
         // $FlowFixMe[incompatible-use] found when upgrading Flow
         if (node.return === null || node.return === workInProgress) {
-          //console.log('completeWork::&&&')
           return;
         }
         node = node.return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow
-      //console.log("completeWork::append 2", matrixnorm.fiberInfo(node));
       node.sibling.return = node.return;
       node = node.sibling;
     }
@@ -1311,9 +1311,6 @@ function completeWork(
             currentHostContext,
             workInProgress,
           );
-          console.log("completeWork::before appendAll",
-            `wip: ${matrixnorm.fiberInfo(workInProgress)}`, 
-            instance.toString());
           appendAllChildren(instance, workInProgress, false, false);
           workInProgress.stateNode = instance;
 

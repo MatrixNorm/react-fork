@@ -29,7 +29,10 @@ describe('useState hook', () => {
       const [count, setCount] = React.useState(0);
 
       return (
-        <span>{count}</span>
+        <div>
+          <button onClick={() => {}}></button>
+          <span>{count}</span>
+        </div>
       );
     }
 
@@ -55,7 +58,7 @@ describe('useState hook', () => {
       return (
         <div>
           <button onClick={incrementCount}></button>
-          <div>{count}</div>
+          <span>{count}</span>
         </div>
       );
     }
@@ -64,14 +67,14 @@ describe('useState hook', () => {
     console.log = () => { };
 
     ReactTestUtils.act(() => {
-      ReactDOM.render(<App />, container);
+      ReactDOM.render(<App />, containerForReactComponent);
     });
 
     console.log = __log;
     console.log('=== UPDATE ===');
 
     ReactTestUtils.act(() => {
-      container
+      containerForReactComponent
         .querySelector('button')
         .dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });

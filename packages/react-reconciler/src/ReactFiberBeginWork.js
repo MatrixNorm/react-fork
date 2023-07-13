@@ -41,6 +41,7 @@ import type {TracingMarkerInstance} from './ReactFiberTracingMarkerComponent';
 import type {TransitionStatus} from './ReactFiberConfig';
 import type {Hook} from './ReactFiberHooks';
 
+import * as matrixnorm from 'matrixnorm';
 import checkPropTypes from 'shared/checkPropTypes';
 import {
   markComponentRenderStarted,
@@ -331,6 +332,7 @@ export function reconcileChildren(
   nextChildren: any,
   renderLanes: Lanes,
 ) {
+  console.log('reconcileChildren', JSON.stringify(matrixnorm.elementInfo(nextChildren), null, 2))
   if (current === null) {
     // If this is a fresh new component that hasn't been rendered yet, we
     // won't update its child set by applying minimal side-effects. Instead,
