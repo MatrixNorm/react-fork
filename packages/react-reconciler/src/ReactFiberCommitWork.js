@@ -1874,7 +1874,7 @@ function insertOrAppendPlacementNodeIntoContainer(
   before: ?Instance,
   parent: Container,
 ): void {
-  console.log("node", matrixnorm.fiberInfo(node));
+  console.log(matrixnorm.fiberInfo(node), before, matrixnorm.domElementInfo(parent));
   const {tag} = node;
   const isHost = tag === HostComponent || tag === HostText;
   if (isHost) {
@@ -2507,6 +2507,10 @@ export function commitMutationEffects(
   inProgressRoot = root;
 
   setCurrentDebugFiberInDEV(finishedWork);
+  {
+    let toObj = matrixnorm.fiberTreeToObject;
+    console.log(JSON.stringify(toObj(finishedWork), null, 2));
+  }
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
   setCurrentDebugFiberInDEV(finishedWork);
 
@@ -2767,7 +2771,6 @@ function commitMutationEffectsOnFiber(
         // during the render phase instead.
         if (finishedWork.flags & ContentReset) {
           const instance: Instance = finishedWork.stateNode;
-          console.log('***', instance.nodeName)
           try {
             resetTextContent(instance);
           } catch (error) {
@@ -2793,6 +2796,7 @@ function commitMutationEffectsOnFiber(
             finishedWork.updateQueue = null;
             if (updatePayload !== null || diffInCommitPhase) {
               try {
+                console.log({oldProps, newProps, updatePayload})
                 commitUpdate(
                   instance,
                   updatePayload,

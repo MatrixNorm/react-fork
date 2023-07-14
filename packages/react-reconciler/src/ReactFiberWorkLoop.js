@@ -1971,7 +1971,7 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 function workLoopSync() {
   // Perform work without checking if we need to yield between fiber.
   while (workInProgress !== null) {
-    performUnitOfWork(workInProgress);
+     performUnitOfWork(workInProgress);
   }
 }
 
@@ -2236,6 +2236,11 @@ function workLoopConcurrent() {
 }
 
 function performUnitOfWork(unitOfWork: Fiber): void {
+  {
+    let hostRoot = workInProgressRoot.current.alternate;
+    let toObj = matrixnorm.fiberTreeToObject;
+    console.log(JSON.stringify(toObj(hostRoot), null, 2));
+  }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't
   // need an additional field on the work in progress.

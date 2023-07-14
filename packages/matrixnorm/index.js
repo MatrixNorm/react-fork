@@ -1,6 +1,6 @@
 import type { Fiber } from 'react-reconciler/src/ReactInternalTypes';
 
-export const getFiberType = fiber => {
+export const getFiberType = (fiber: Fiber) => {
   switch (fiber.tag) {
     case 0: {
       return `func <${fiber.type.name}>`;
@@ -33,7 +33,7 @@ export const elementInfo = element => {
     return element.map(el => elementInfo(el));
   }
 
-  if (typeof element === 'object') { 
+  if (typeof element === 'object') {
     const _element = { ...element };
 
     _element._owner = fiberInfo(_element._owner);
@@ -43,8 +43,8 @@ export const elementInfo = element => {
 
     let children = _element.props?.children;
     // && (Array.isArray(children) || Object.isObject(children)
-    if (children ) {
-      _element.props = {..._element.props, children: elementInfo(children)}
+    if (children) {
+      _element.props = { ..._element.props, children: elementInfo(children) }
     }
     return _element;
   } else {
@@ -54,7 +54,27 @@ export const elementInfo = element => {
 
 export const domElementInfo = domElement => {
   return `DOM elem <${domElement.nodeName}>`
+};
+
+function __getAllChildrenOfFiber(fiber: Fiber) {
+  let children = [];
+  let child = fiber.child;
+  while (child) {
+    children.push(child);
+    child = child.sibling;
+  }
+  return children;
 }
+
+export const fiberTreeToObject = (treeRoot: Fiber) => {
+  let { child: firstChild } = treeRoot;
+  if (firstChild) {
+    let children = __getAllChildrenOfFiber(treeRoot);
+    return { [fiberInfo(treeRoot)]: children.map(fiberTreeToObject) };
+  } else {
+    return fiberInfo(treeRoot);
+  }
+};
 
 export const getStackTrace = depth => {
   let obj = {};
