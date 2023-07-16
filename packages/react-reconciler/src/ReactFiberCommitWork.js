@@ -2525,7 +2525,7 @@ function recursivelyTraverseMutationEffects(
 ) {
   // Deletions effects can be scheduled on any fiber type. They need to happen
   // before the children effects hae fired.
-  //console.log(`parentFiber: ${matrixnorm.fiberInfo(parentFiber)}`)
+  console.log(matrixnorm.fiberInfo(parentFiber))
   const deletions = parentFiber.deletions;
   if (deletions !== null) {
     console.log(`deletions: ${deletions}`);
@@ -2548,6 +2548,9 @@ function recursivelyTraverseMutationEffects(
       commitMutationEffectsOnFiber(child, root, lanes);
       child = child.sibling;
     }
+    console.log('done with children of', matrixnorm.fiberInfo(parentFiber))
+  } else {
+    console.log('no mutation here')
   }
   setCurrentDebugFiberInDEV(prevDebugFiber);
 }
@@ -3105,8 +3108,9 @@ function commitMutationEffectsOnFiber(
     }
   }
 }
+
 function commitReconciliationEffects(finishedWork: Fiber) {
-  //console.log("finishedWork: ", matrixnorm.fiberInfo(finishedWork));
+  console.log(matrixnorm.fiberInfo(finishedWork));
   // Placement effects (insertions, reorders) can be scheduled on any fiber
   // type. They needs to happen after the children effects have fired, but
   // before the effects on this fiber have fired.

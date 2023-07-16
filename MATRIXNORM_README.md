@@ -123,7 +123,7 @@ function completeWork(current: Fiber | null, workInProgress: Fiber): Fiber | nul
 }
 ```
 
-## Building element tree fromb bottom to top
+## Building element tree from bottom to top
 
 ```javascript
 function appendAllChildren(parent: Instance, workInProgress: Fiber) {

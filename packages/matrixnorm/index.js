@@ -53,7 +53,7 @@ export const elementInfo = element => {
 };
 
 export const domElementInfo = domElement => {
-  return `DOM elem <${domElement.nodeName}>`
+  return `DOM elem <${domElement.tagName}>`
 };
 
 function __getAllChildrenOfFiber(fiber: Fiber) {

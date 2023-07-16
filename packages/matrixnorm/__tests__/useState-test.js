@@ -23,16 +23,16 @@ describe('useState hook', () => {
     containerForReactComponent = null;
   });
 
-  it('mount', () => {
+  it('mount1', () => {
     function App() {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
 
       return (
-        <div>
-          <button onClick={() => {}}></button>
+        <main>
+          <button onClick={() => { }}></button>
           <span>{count}</span>
-        </div>
+        </main>
       );
     }
 
@@ -41,11 +41,11 @@ describe('useState hook', () => {
     ReactTestUtils.act(() => {
       ReactDOM.render(<App />, containerForReactComponent);
     });
-    
+
     console.log('=== DONE INITIAL RENDER ===');
   });
 
-  it('update', () => {
+  it('update1', () => {
     function App() {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
@@ -80,5 +80,28 @@ describe('useState hook', () => {
     });
   });
 
+  it('mount2', () => {
+    function App() {
+      console.log('=== App ===');
+      const [count, setCount] = React.useState(0);
 
+      return (
+        <main id="moose">
+          <section>
+            <button onClick={() => { }}></button>
+            <span>{count}</span>
+          </section>
+          <footer><p>bear</p></footer>
+        </main>
+      );
+    }
+
+    console.log('=== START INITIAL RENDER ===');
+
+    ReactTestUtils.act(() => {
+      ReactDOM.render(<App />, containerForReactComponent);
+    });
+
+    console.log('=== DONE INITIAL RENDER ===');
+  });
 });
