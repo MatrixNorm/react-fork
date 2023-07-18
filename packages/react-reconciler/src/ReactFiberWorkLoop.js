@@ -2239,14 +2239,17 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   {
     let hostRoot = workInProgressRoot.current.alternate;
     let toObj = matrixnorm.fiberTreeToObject;
-    console.log(JSON.stringify(toObj(hostRoot), null, 2));
+    console.log("tree: ", JSON.stringify(toObj(hostRoot), null, 2));
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't
   // need an additional field on the work in progress.
   const current = unitOfWork.alternate;
   setCurrentDebugFiberInDEV(unitOfWork);
-  console.log("beginWork>>>", `wip: ${matrixnorm.fiberInfo(unitOfWork)}`);
+  console.log("beginWork>>>",
+    `wip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+    `cur: ${matrixnorm.fiberInfo(current)}`
+  );
   let next;
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
@@ -2255,7 +2258,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log("<<<beginWork", `next: ${matrixnorm.fiberInfo(next)}`);
+  console.log("<<<beginWork", `next: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`);
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2481,9 +2484,10 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       // Update render duration assuming we didn't error.
       stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
     }
-    console.log("<<<completeWork", `next: ${matrixnorm.fiberInfo(next)}`)
+    
     resetCurrentDebugFiberInDEV();
     if (next !== null) {
+      console.log("<<<completeWork", `next: ${matrixnorm.fiberInfo(next)}`)
       // Completing this fiber spawned new work. Work on that next.
       workInProgress = next;
       return;
@@ -2497,7 +2501,10 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       workInProgress = siblingFiber;
       return;
     }
-    console.log(`${matrixnorm.fiberInfo(completedWork)} has no siblings`);
+    console.log(
+      `${matrixnorm.fiberInfo(completedWork)} has no siblings\n`,
+      `return to ${matrixnorm.fiberInfo(returnFiber)}`
+    );
     // Otherwise, return to the parent
     // $FlowFixMe[incompatible-type] we bail out when we get a null
     completedWork = returnFiber;

@@ -332,7 +332,7 @@ export function reconcileChildren(
   nextChildren: any,
   renderLanes: Lanes,
 ) {
-  console.log('reconcileChildren', JSON.stringify(matrixnorm.elementInfo(nextChildren), null, 2))
+  console.log('reconcileChildren', 'nextChildren', JSON.stringify(matrixnorm.elementInfo(nextChildren), null, 2))
   if (current === null) {
     // If this is a fresh new component that hasn't been rendered yet, we
     // won't update its child set by applying minimal side-effects. Instead,

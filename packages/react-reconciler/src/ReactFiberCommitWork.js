@@ -2799,6 +2799,7 @@ function commitMutationEffectsOnFiber(
             finishedWork.updateQueue = null;
             if (updatePayload !== null || diffInCommitPhase) {
               try {
+                if (updatePayload !== null) { throw "QWERTY" };
                 console.log({oldProps, newProps, updatePayload})
                 commitUpdate(
                   instance,

@@ -221,8 +221,10 @@ function appendAllChildren(
   needsVisibilityToggle: boolean,
   isHidden: boolean,
 ) {
-  console.log("appendAllChildren", matrixnorm.domElementInfo(parent),
-    `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
+  // console.log("appendAllChildren",
+  //   `DOM elem: ${matrixnorm.domElementInfo(parent)}`,
+  //   `wip: ${matrixnorm.fiberInfo(workInProgress)}`
+  // );
   if (supportsMutation) {
     // We only have the top Fiber that was created but we need recurse down its
     // children to find all the terminal nodes.
@@ -1312,6 +1314,8 @@ function completeWork(
             workInProgress,
           );
           appendAllChildren(instance, workInProgress, false, false);
+          console.log(
+            `${matrixnorm.fiberInfo(workInProgress)}.stateNode = ${matrixnorm.domElementInfo(instance)}`);
           workInProgress.stateNode = instance;
 
           // Certain renderers require commit-time effects for initial mount.
