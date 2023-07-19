@@ -1874,12 +1874,14 @@ function insertOrAppendPlacementNodeIntoContainer(
   before: ?Instance,
   parent: Container,
 ): void {
-  console.log(matrixnorm.fiberInfo(node), before, matrixnorm.domElementInfo(parent));
+  console.log(matrixnorm.fiberInfo(node),
+    `parent DOM elem: ${matrixnorm.domElementInfo(parent)}`
+  );
   const {tag} = node;
   const isHost = tag === HostComponent || tag === HostText;
   if (isHost) {
     const stateNode = node.stateNode;
-    console.log('***', stateNode.nodeName)
+    console.log(`append ${matrixnorm.domElementInfo(stateNode)} to ${matrixnorm.domElementInfo(parent)}`)
     if (before) {
       insertInContainerBefore(parent, stateNode, before);
     } else {
@@ -2550,7 +2552,7 @@ function recursivelyTraverseMutationEffects(
     }
     console.log('done with children of', matrixnorm.fiberInfo(parentFiber))
   } else {
-    console.log('no mutation here')
+    console.log('no mutation in subtree')
   }
   setCurrentDebugFiberInDEV(prevDebugFiber);
 }
@@ -2783,7 +2785,6 @@ function commitMutationEffectsOnFiber(
 
         if (flags & Update) {
           const instance: Instance = finishedWork.stateNode;
-          console.log('***', instance.nodeName)
           if (instance != null) {
             // Commit the work prepared earlier.
             const newProps = finishedWork.memoizedProps;
@@ -2799,8 +2800,7 @@ function commitMutationEffectsOnFiber(
             finishedWork.updateQueue = null;
             if (updatePayload !== null || diffInCommitPhase) {
               try {
-                if (updatePayload !== null) { throw "QWERTY" };
-                console.log({oldProps, newProps, updatePayload})
+                console.log("commit update on ", matrixnorm.domElementInfo(instance))
                 commitUpdate(
                   instance,
                   updatePayload,
@@ -3111,12 +3111,12 @@ function commitMutationEffectsOnFiber(
 }
 
 function commitReconciliationEffects(finishedWork: Fiber) {
-  console.log(matrixnorm.fiberInfo(finishedWork));
   // Placement effects (insertions, reorders) can be scheduled on any fiber
   // type. They needs to happen after the children effects have fired, but
   // before the effects on this fiber have fired.
   const flags = finishedWork.flags;
   if (flags & Placement) {
+    console.log("placement ", matrixnorm.fiberInfo(finishedWork));
     try {
       commitPlacement(finishedWork);
     } catch (error) {

@@ -387,6 +387,7 @@ function setProp(
 ): void {
   switch (key) {
     case 'children': {
+      console.log("%%%")
       if (typeof value === 'string') {
         if (__DEV__) {
           validateTextNesting(value, tag);

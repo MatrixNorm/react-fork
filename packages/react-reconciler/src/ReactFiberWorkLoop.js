@@ -2237,9 +2237,10 @@ function workLoopConcurrent() {
 
 function performUnitOfWork(unitOfWork: Fiber): void {
   {
-    let hostRoot = workInProgressRoot.current.alternate;
+    let wipHostRoot = workInProgressRoot.current.alternate;
     let toObj = matrixnorm.fiberTreeToObject;
-    console.log("tree: ", JSON.stringify(toObj(hostRoot), null, 2));
+    console.log("tree: ", JSON.stringify(toObj(wipHostRoot), null, 2));
+    console.log(wipHostRoot.child === workInProgressRoot.current.child)
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't
