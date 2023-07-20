@@ -1524,6 +1524,11 @@ function resetWorkInProgressStack() {
 }
 
 function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
+  //console.log(matrixnorm.fiberInfo(root.current))
+  //console.log(matrixnorm.fiberInfo(root.current.child))
+  console.log(matrixnorm.fiberTreeToObject(root))
+  //console.log("cur", matrixnorm.fiberTreeToObjectImpl(root.current))
+  //console.log("wip", matrixnorm.fiberTreeToObjectImpl(root.current.alternate))
   root.finishedWork = null;
   root.finishedLanes = NoLanes;
 
@@ -2237,10 +2242,10 @@ function workLoopConcurrent() {
 
 function performUnitOfWork(unitOfWork: Fiber): void {
   {
-    let wipHostRoot = workInProgressRoot.current.alternate;
-    let toObj = matrixnorm.fiberTreeToObject;
-    console.log("tree: ", JSON.stringify(toObj(wipHostRoot), null, 2));
-    console.log(wipHostRoot.child === workInProgressRoot.current.child)
+    let tree2Obj = matrixnorm.fiberTreeToObject;
+    workInProgressRoot && console.log("tree: ", JSON.stringify(tree2Obj(workInProgressRoot), null, 2));
+    let cur = workInProgressRoot.current
+    let wip = workInProgressRoot.current.alternate
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't

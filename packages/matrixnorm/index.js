@@ -1,4 +1,4 @@
-import type { Fiber } from 'react-reconciler/src/ReactInternalTypes';
+import type { Fiber, FiberRoot } from 'react-reconciler/src/ReactInternalTypes';
 
 export const getFiberType = (fiber: Fiber) => {
   switch (fiber.tag) {
@@ -22,7 +22,7 @@ export const getFiberType = (fiber: Fiber) => {
   }
 };
 
-export const fiberInfo = (fiber: $ReadOnly<Fiber>): void => {
+export const fiberInfo = (fiber: Fiber | null): void => {
   return fiber ? `Fib <tag=${fiber.tag} ${getFiberType(fiber)}>` : 'Fib <NULL>';
 };
 
@@ -66,15 +66,21 @@ function __getAllChildrenOfFiber(fiber: Fiber) {
   return children;
 }
 
-export const fiberTreeToObject = (treeRoot: Fiber) => {
-  let { child: firstChild } = treeRoot;
+export const fiberTreeToObjectImpl = (node: Fiber) => {
+  let { child: firstChild, alternate: altNode } = node;
   if (firstChild) {
-    let children = __getAllChildrenOfFiber(treeRoot);
-    return { [fiberInfo(treeRoot)]: children.map(fiberTreeToObject) };
+    let children = __getAllChildrenOfFiber(node);
+    return { [fiberInfo(node)]: children.map(fiberTreeToObjectImpl) };
   } else {
-    return fiberInfo(treeRoot);
+    return fiberInfo(node);
   }
 };
+
+export const fiberTreeToObject = (workInProgressRoot: FiberRoot) => {
+  let wipHostRoot = workInProgressRoot.current.alternate;
+  console.log(fiberInfo(wipHostRoot))
+  return fiberTreeToObjectImpl(wipHostRoot);
+}
 
 export const getStackTrace = depth => {
   let obj = {};
