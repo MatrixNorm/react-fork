@@ -1524,9 +1524,8 @@ function resetWorkInProgressStack() {
 }
 
 function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
-  //console.log(matrixnorm.fiberInfo(root.current))
   //console.log(matrixnorm.fiberInfo(root.current.child))
-  console.log(matrixnorm.fiberTreeToObject(root))
+  //console.log(matrixnorm.fiberTreeToObject(root))
   //console.log("cur", matrixnorm.fiberTreeToObjectImpl(root.current))
   //console.log("wip", matrixnorm.fiberTreeToObjectImpl(root.current.alternate))
   root.finishedWork = null;
@@ -1548,7 +1547,23 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
 
   resetWorkInProgressStack();
   workInProgressRoot = root;
+  {
+    let tree2obj = matrixnorm.fiberTreeToObject
+    let curHostRoot = root.current
+    let wipHostRoot = curHostRoot.alternate
+    console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
+    console.log("cur tree", JSON.stringify(tree2obj(curHostRoot), null, 2))
+    wipHostRoot && console.log("wip tree", JSON.stringify(tree2obj(wipHostRoot), null, 2))
+  }
   const rootWorkInProgress = createWorkInProgress(root.current, null);
+  {
+    let tree2obj = matrixnorm.fiberTreeToObject
+    let curHostRoot = root.current
+    let wipHostRoot = curHostRoot.alternate
+    console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
+    console.log("cur tree", JSON.stringify(tree2obj(curHostRoot), null, 2))
+    wipHostRoot && console.log("wip tree", JSON.stringify(tree2obj(wipHostRoot), null, 2))
+  }
   workInProgress = rootWorkInProgress;
   workInProgressRootRenderLanes = renderLanes = lanes;
   workInProgressSuspendedReason = NotSuspended;
@@ -2243,9 +2258,9 @@ function workLoopConcurrent() {
 function performUnitOfWork(unitOfWork: Fiber): void {
   {
     let tree2Obj = matrixnorm.fiberTreeToObject;
-    workInProgressRoot && console.log("tree: ", JSON.stringify(tree2Obj(workInProgressRoot), null, 2));
-    let cur = workInProgressRoot.current
-    let wip = workInProgressRoot.current.alternate
+    let curHostRoot = workInProgressRoot.current
+    let wipHostRoot = curHostRoot.alternate
+    workInProgressRoot && console.log("tree: ", JSON.stringify(tree2Obj(wipHostRoot), null, 2));
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't

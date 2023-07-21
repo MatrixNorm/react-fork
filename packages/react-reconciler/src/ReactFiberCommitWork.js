@@ -2511,7 +2511,7 @@ export function commitMutationEffects(
   setCurrentDebugFiberInDEV(finishedWork);
   {
     let toObj = matrixnorm.fiberTreeToObject;
-    console.log(JSON.stringify(toObj(root), null, 2));
+    console.log(JSON.stringify(toObj(root.current.alternate), null, 2));
   }
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
   setCurrentDebugFiberInDEV(finishedWork);

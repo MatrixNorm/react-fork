@@ -66,20 +66,30 @@ function __getAllChildrenOfFiber(fiber: Fiber) {
   return children;
 }
 
-export const fiberTreeToObjectImpl = (node: Fiber) => {
-  let { child: firstChild, alternate: altNode } = node;
+export const fiberTreeToObject = (node: Fiber) => {
+  let { child: firstChild } = node;
   if (firstChild) {
     let children = __getAllChildrenOfFiber(node);
-    return { [fiberInfo(node)]: children.map(fiberTreeToObjectImpl) };
+    return { [fiberInfo(node)]: children.map(fiberTreeToObject) };
   } else {
     return fiberInfo(node);
   }
 };
 
-export const fiberTreeToObject = (workInProgressRoot: FiberRoot) => {
-  let wipHostRoot = workInProgressRoot.current.alternate;
-  console.log(fiberInfo(wipHostRoot))
-  return fiberTreeToObjectImpl(wipHostRoot);
+const fiberTreeToObject2 = (wipNode: Fiber, curNode: Fiber) => {
+  if (wipNode === curNode) {
+    let { child: firstChild } = wipNode;
+    if (firstChild) {
+      let children = __getAllChildrenOfFiber(wipNode);
+      return { [`(!)${fiberInfo(wipNode)}`]: children.map(fiberTreeToObject) };
+    } else {
+      return `(!)${fiberInfo(wipNode)}`;
+    }
+  } else {
+    let { child: wipFirstChild } = wipNode;
+    let { child: curFirstChild } = curNode;
+    // XXX
+  }
 }
 
 export const getStackTrace = depth => {
