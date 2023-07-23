@@ -111,4 +111,44 @@ describe('fiber tree general', () => {
       });
     });
   });
+
+  describe('delete1', () => {
+    function App() {
+      console.log('=== App ===');
+      const [count, setCount] = React.useState(0);
+  
+      const incrementCount = () => {
+        console.log('=== incrementCount ===');
+        setCount(prev => prev + 1);
+      };
+  
+      return (
+        <main>
+          <button onClick={incrementCount}></button>
+          {count === 0 ? <span>hi</span> : null}
+        </main>
+      );
+    }
+  
+    it('mount', () => {
+      renderIt(<App />);
+    });
+  
+    it('update', () => {
+      let __log = console.log;
+      console.log = () => { };
+  
+      renderIt(<App />);
+  
+      console.log = __log;
+      console.log('=== START UPDATE ===');
+  
+      ReactTestUtils.act(() => {
+        containerForReactComponent
+          .querySelector('button')
+          .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+    });
+  });
+  
 });

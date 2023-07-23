@@ -1548,21 +1548,21 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
   resetWorkInProgressStack();
   workInProgressRoot = root;
   {
-    let tree2obj = matrixnorm.fiberTreeToObject
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
     console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
-    console.log("cur tree", JSON.stringify(tree2obj(curHostRoot), null, 2))
-    wipHostRoot && console.log("wip tree", JSON.stringify(tree2obj(wipHostRoot), null, 2))
+    console.log("cur tree", tree2XML(curHostRoot))
+    wipHostRoot && console.log("wip tree", tree2XML(wipHostRoot))
   }
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   {
-    let tree2obj = matrixnorm.fiberTreeToObject
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
     console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
-    console.log("cur tree", JSON.stringify(tree2obj(curHostRoot), null, 2))
-    wipHostRoot && console.log("wip tree", JSON.stringify(tree2obj(wipHostRoot), null, 2))
+    console.log("cur tree", tree2XML(curHostRoot))
+    wipHostRoot && console.log("wip tree", tree2XML(wipHostRoot))
   }
   workInProgress = rootWorkInProgress;
   workInProgressRootRenderLanes = renderLanes = lanes;
@@ -2257,10 +2257,10 @@ function workLoopConcurrent() {
 
 function performUnitOfWork(unitOfWork: Fiber): void {
   {
-    let tree2Obj = matrixnorm.fiberTreeToObject;
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = workInProgressRoot.current
     let wipHostRoot = curHostRoot.alternate
-    workInProgressRoot && console.log("tree: ", JSON.stringify(tree2Obj(wipHostRoot), null, 2));
+    workInProgressRoot && console.log("tree: ", tree2XML(wipHostRoot));
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't

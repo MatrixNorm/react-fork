@@ -3,10 +3,10 @@ import type { Fiber, FiberRoot } from 'react-reconciler/src/ReactInternalTypes';
 export const getFiberType = (fiber: Fiber) => {
   switch (fiber.tag) {
     case 0: {
-      return `func <${fiber.type.name}>`;
+      return `func {${fiber.type.name}}`;
     }
     case 2: {
-      return `indeterminate <${fiber.type.name}>`;
+      return `indeterminate {${fiber.type.name}}`;
     }
     case 3: {
       return 'hostRoot';
@@ -24,6 +24,10 @@ export const getFiberType = (fiber: Fiber) => {
 
 export const fiberInfo = (fiber: Fiber | null): void => {
   return fiber ? `Fib <tag=${fiber.tag} ${getFiberType(fiber)}>` : 'Fib <NULL>';
+};
+
+export const fiberInfoShort = (fiber: Fiber | null): void => {
+  return fiber ? `${getFiberType(fiber)}` : 'NULL';
 };
 
 export const elementInfo = element => {
@@ -70,27 +74,60 @@ export const fiberTreeToObject = (node: Fiber) => {
   let { child: firstChild } = node;
   if (firstChild) {
     let children = __getAllChildrenOfFiber(node);
-    return { [fiberInfo(node)]: children.map(fiberTreeToObject) };
+    return { [fiberInfoShort(node)]: children.map(fiberTreeToObject) };
   } else {
-    return fiberInfo(node);
+    return fiberInfoShort(node);
   }
 };
 
-const fiberTreeToObject2 = (wipNode: Fiber, curNode: Fiber) => {
-  if (wipNode === curNode) {
-    let { child: firstChild } = wipNode;
-    if (firstChild) {
-      let children = __getAllChildrenOfFiber(wipNode);
-      return { [`(!)${fiberInfo(wipNode)}`]: children.map(fiberTreeToObject) };
+function fiberTreeToXMLClosure() {
+  const print = console.log;
+  const step = "  ";
+  
+  let depth = -1;
+  
+  function fiberTreeToXML(node: Fiber) {
+    depth++;
+
+    let result;
+    const children = __getAllChildrenOfFiber(node);
+    const padding = step.repeat(depth);
+    const fibInfo = fiberInfoShort(node);
+    
+    if (children.length === 0) {
+      result = `${padding}<${fibInfo} />\n`;
     } else {
-      return `(!)${fiberInfo(wipNode)}`;
+      result = `${padding}<${fibInfo}>\n`;
+      for(let kid of children) {
+        result += fiberTreeToXML(kid);
+      }      
+      result += `${padding}</${fibInfo}>\n`;
     }
-  } else {
-    let { child: wipFirstChild } = wipNode;
-    let { child: curFirstChild } = curNode;
-    // XXX
+
+    depth--;
+    return result;
   }
-}
+
+  return fiberTreeToXML;
+};
+
+export const fiberTreeToXML = fiberTreeToXMLClosure();
+
+// const fiberTreeToObject2 = (wipNode: Fiber, curNode: Fiber) => {
+//   if (wipNode === curNode) {
+//     let { child: firstChild } = wipNode;
+//     if (firstChild) {
+//       let children = __getAllChildrenOfFiber(wipNode);
+//       return { [`(!)${fiberInfo(wipNode)}`]: children.map(fiberTreeToObject) };
+//     } else {
+//       return `(!)${fiberInfo(wipNode)}`;
+//     }
+//   } else {
+//     let { child: wipFirstChild } = wipNode;
+//     let { child: curFirstChild } = curNode;
+//     // XXX
+//   }
+// }
 
 export const getStackTrace = depth => {
   let obj = {};
