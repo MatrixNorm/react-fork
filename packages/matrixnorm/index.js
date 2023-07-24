@@ -80,10 +80,8 @@ export const fiberTreeToObject = (node: Fiber) => {
   }
 };
 
-function fiberTreeToXMLClosure() {
-  const print = console.log;
+export function fiberTreeToXMLFactory() {
   const step = "  ";
-  
   let depth = -1;
   
   function fiberTreeToXML(node: Fiber) {
@@ -111,7 +109,83 @@ function fiberTreeToXMLClosure() {
   return fiberTreeToXML;
 };
 
-export const fiberTreeToXML = fiberTreeToXMLClosure();
+export function fiberTreeToXMLFactory2() {
+  const step = "  ";
+  let depth = -1;
+
+  function fiberTreeToXML(node: Fiber) {
+    let result;
+
+    depth++;
+    const padding = step.repeat(depth);
+    const fibInfo = fiberInfoShort(node);
+
+    if (node.child) {
+      result = `${padding}<${fibInfo}>\n`;
+      result += fiberTreeToXML(node.child);
+      result += `${padding}</${fibInfo}>\n`;
+    } else {
+      result = `${padding}<${fibInfo} />\n`;
+    }
+
+    depth--;
+
+    if (node.sibling) {
+      result += fiberTreeToXML(node.sibling);
+    }
+
+    return result;
+  }
+
+  return fiberTreeToXML;
+};
+
+function* iterFiberTree(node: Fiber) {
+  yield ["enter", node];
+  if (node.child) {
+    yield* iterFiberTree(node.child);
+  }
+  yield ["leave", node];
+  if (node.sibling) {
+    yield* iterFiberTree(node.sibling);
+  }
+}
+
+export function fiberTreeToXML3(startNode: Fiber) {
+  const tab = "  ";
+  let result = "";
+  let d = -1;
+
+  for (let [phase, fiber] of iterFiberTree(startNode)) {
+    if (phase === "enter") {
+      d++;
+      result += `${tab.repeat(d)}<${fiberInfoShort(fiber)}>\n`;
+    } else {
+      result += `${tab.repeat(d)}</${fiberInfoShort(fiber)}>\n`;
+      d--;
+    }
+  }
+  return result;
+}
+
+export function fiberTreeToXML4(startNode: Fiber) {
+  const tab = "  ";
+  let result = "";
+  let d = -1;
+  let prevPhase = null;
+
+  for (let [phase, fiber] of iterFiberTree(startNode)) {
+    if (phase === "enter") {
+      d++;
+      result += `${tab.repeat(d)}<${fiberInfoShort(fiber)}>\n`;
+    } else {
+      result += `${tab.repeat(d)}</${fiberInfoShort(fiber)}>\n`;
+      d--;
+    }
+    prevPhase = phase;
+  }
+  return result;
+}
 
 // const fiberTreeToObject2 = (wipNode: Fiber, curNode: Fiber) => {
 //   if (wipNode === curNode) {
