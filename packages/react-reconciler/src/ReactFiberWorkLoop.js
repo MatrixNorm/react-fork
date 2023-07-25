@@ -1548,7 +1548,7 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
   resetWorkInProgressStack();
   workInProgressRoot = root;
   {
-    let tree2XML = matrixnorm.fiberTreeToXMLFactory()
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
     console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
@@ -1557,7 +1557,7 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
   }
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   {
-    let tree2XML = matrixnorm.fiberTreeToXMLFactory()
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
     console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
@@ -2257,7 +2257,7 @@ function workLoopConcurrent() {
 
 function performUnitOfWork(unitOfWork: Fiber): void {
   {
-    let tree2XML = matrixnorm.fiberTreeToXMLFactory()
+    let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = workInProgressRoot.current
     let wipHostRoot = curHostRoot.alternate
     workInProgressRoot && console.log("tree: ", tree2XML(wipHostRoot));

@@ -2511,12 +2511,14 @@ export function commitMutationEffects(
   setCurrentDebugFiberInDEV(finishedWork);
   {
     let wipHostRoot = root.current.alternate;
-    let toXML = matrixnorm.fiberTreeToXMLFactory();
-    let toXML2 = matrixnorm.fiberTreeToXMLFactory2();
+    let toXML = matrixnorm.fiberTreeToXML;
+    let toXML2 = matrixnorm.fiberTreeToXML2;
     let toXML3 = matrixnorm.fiberTreeToXML3;
-    console.log(toXML(wipHostRoot));
-    console.log(toXML2(wipHostRoot));
-    console.log(toXML3(wipHostRoot));
+     if (wipHostRoot) {
+      console.log(toXML(wipHostRoot));
+      console.log(toXML2(wipHostRoot));
+      console.log(toXML3(wipHostRoot));
+    }
   }
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
   setCurrentDebugFiberInDEV(finishedWork);
