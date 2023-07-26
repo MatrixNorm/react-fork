@@ -84,7 +84,6 @@ export const fiberTreeToObject = (node: Fiber): Object => {
   }
 };
 
-
 export function fiberTreeToXML(startNode: Fiber): string {
   const tab = "  ";
   let depth = -1;
@@ -146,54 +145,63 @@ export function fiberTreeToXML2(startNode: Fiber): string {
 }
 
 type Phase = "enter" | "leave" | "leaf";
+type FiberTreeGenerator = Generator<[Phase, Fiber], void, void>
 
-// function* iterFiberTree(node: Fiber): Generator<[Phase, Fiber], void, void> {
-//   yield ["enter", node];
-//   if (node.child) {
-//     yield* iterFiberTree(node.child);
-//   }
-//   yield ["leave", node];
-//   if (node.sibling) {
-//     yield* iterFiberTree(node.sibling);
-//   }
-// }
-
-function* iterFiberTree(node: Fiber): Generator<[Phase, Fiber], void, void> {
+function* iterFiberTree(node: Fiber): FiberTreeGenerator {
   if (node.child === null) {
     yield ["leaf", node];
   } else {
     yield ["enter", node];
     yield* iterFiberTree(node.child);
     yield ["leave", node];
-  }  
+  }
   if (node.sibling) {
     yield* iterFiberTree(node.sibling);
   }
 }
 
-// export function fiberTreeToXML3(startNode: Fiber): string {
-//   const tab = "  ";
-//   let result = "";
-//   let d = -1;
+function* iterFiberTreeX(node: Fiber): FiberTreeGenerator {
+  if (node.child === null) {
+    yield ["leaf", node];
+  } else {
+    yield ["enter", node];
+    for(let res of iterFiberTreeX(node.child)) {
+      yield res;
+    }
+    yield ["leave", node];
+  }
+  if (node.sibling) {
+    for(let res of iterFiberTreeX(node.sibling)) {
+      yield res;
+    }
+  }
+}
 
-//   for (let [phase, fiber] of iterFiberTree(startNode)) {
-//     if (phase === "enter") {
-//       d++;
-//       result += `${tab.repeat(d)}<${fiberInfoShort(fiber)}>\n`;
-//     } else {
-//       result += `${tab.repeat(d)}</${fiberInfoShort(fiber)}>\n`;
-//       d--;
-//     }
-//   }
-//   return result;
-// }
+function* iterFiberTreeY(node: Fiber): FiberTreeGenerator {
+  while (node) {
+    if (node.child === null) {
+      yield ["leaf", node];
+    } else {
+      yield ["enter", node];
+      for(let res of iterFiberTreeY(node.child)) {
+        yield res;
+      }
+      yield ["leave", node];
+    }
 
-export function fiberTreeToXML3(startNode: Fiber): string {
+    if (node.sibling === null) {
+      break;
+    }
+    node = node.sibling;
+  };
+}
+
+const fiberTreeToXMLWithGenerator = (generator: Fiber => FiberTreeGenerator) => (startNode: Fiber): string => {
   const tab = "  ";
   let result = "";
   let d = -1;
 
-  for (let [phase, fiber] of iterFiberTree(startNode)) {
+  for (let [phase, fiber] of generator(startNode)) {
     const fibInfo = fiberInfoShort(fiber);
     if (phase === "enter") {
       d++;
@@ -209,6 +217,31 @@ export function fiberTreeToXML3(startNode: Fiber): string {
   }
   return result;
 }
+
+export const fiberTreeToXML3: Fiber => string = fiberTreeToXMLWithGenerator(iterFiberTree);
+export const fiberTreeToXML3X: Fiber => string = fiberTreeToXMLWithGenerator(iterFiberTreeX);
+
+// export function fiberTreeToXML3(startNode: Fiber): string {
+//   const tab = "  ";
+//   let result = "";
+//   let d = -1;
+
+//   for (let [phase, fiber] of iterFiberTree(startNode)) {
+//     const fibInfo = fiberInfoShort(fiber);
+//     if (phase === "enter") {
+//       d++;
+//       result += `${tab.repeat(d)}<${fibInfo}>\n`;
+//     } else if(phase === "leave") {
+//       result += `${tab.repeat(d)}</${fibInfo}>\n`;
+//       d--;
+//     } else {
+//       d++;
+//       result += `${tab.repeat(d)}<${fibInfo} />\n`;
+//       d--;
+//     }
+//   }
+//   return result;
+// }
 
 // const fiberTreeToObject2 = (wipNode: Fiber, curNode: Fiber) => {
 //   if (wipNode === curNode) {
@@ -226,7 +259,7 @@ export function fiberTreeToXML3(startNode: Fiber): string {
 //   }
 // }
 
-export const getStackTrace = depth => {
+export const getStackTrace = (depth: number): string => {
   let obj = {};
   Error.captureStackTrace(obj, getStackTrace);
 
