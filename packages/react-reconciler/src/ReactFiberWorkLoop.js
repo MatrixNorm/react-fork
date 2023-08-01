@@ -1551,18 +1551,26 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
     let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
-    console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
-    console.log("cur tree", tree2XML(curHostRoot))
-    wipHostRoot && console.log("wip tree", tree2XML(wipHostRoot))
+    console.log(
+      "cur tree:\n", tree2XML(curHostRoot),
+      "wip tree:\n", wipHostRoot && tree2XML(wipHostRoot),
+      "curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot
+    )
   }
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   {
     let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
-    console.log("curHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot)
-    console.log("cur tree", tree2XML(curHostRoot))
-    wipHostRoot && console.log("wip tree", tree2XML(wipHostRoot))
+    console.log(
+      "cur tree:", tree2XML(curHostRoot),
+      "wip tree:", wipHostRoot && tree2XML(wipHostRoot, curHostRoot),
+      "\ncurHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot
+    )
+    // XXX
+    // XXX
+    // XXX
+    console.log = () => {}
   }
   workInProgress = rootWorkInProgress;
   workInProgressRootRenderLanes = renderLanes = lanes;
@@ -2260,7 +2268,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
     let tree2XML = matrixnorm.fiberTreeToXML
     let curHostRoot = workInProgressRoot.current
     let wipHostRoot = curHostRoot.alternate
-    workInProgressRoot && console.log("tree: ", tree2XML(wipHostRoot));
+    wipHostRoot && console.log("tree:\n", tree2XML(wipHostRoot, curHostRoot));
   }
   // The current, flushed, state of this fiber is the alternate. Ideally
   // nothing should rely on this, but relying on it here means that we don't
@@ -2268,8 +2276,9 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   const current = unitOfWork.alternate;
   setCurrentDebugFiberInDEV(unitOfWork);
   console.log("beginWork>>>",
-    `wip: ${matrixnorm.fiberInfo(unitOfWork)}`,
-    `cur: ${matrixnorm.fiberInfo(current)}`
+    `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+    `\ncur: ${matrixnorm.fiberInfo(current)}`,
+    `\nwip == curr: ${unitOfWork === current}`
   );
   let next;
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
@@ -2279,7 +2288,9 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log("<<<beginWork", `next: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`);
+  console.log("<<<beginWork", 
+    `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`
+  );
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;

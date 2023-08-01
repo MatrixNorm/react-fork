@@ -2515,11 +2515,16 @@ export function commitMutationEffects(
     let toXML2 = matrixnorm.fiberTreeToXML2;
     let toXML3 = matrixnorm.fiberTreeToXML3;
     let toXML3X = matrixnorm.fiberTreeToXML3X;
+    let toXML3Y = matrixnorm.fiberTreeToXML3Y;
      if (wipHostRoot) {
+      let xml = toXML(wipHostRoot);
       console.log(toXML(wipHostRoot));
-      console.log(toXML2(wipHostRoot));
-      console.log(toXML3(wipHostRoot));
-      console.log(toXML3X(wipHostRoot));
+      console.log(
+        toXML2(wipHostRoot) === xml,
+        toXML3(wipHostRoot) === xml,
+        toXML3X(wipHostRoot) === xml,
+        toXML3Y(wipHostRoot) === xml
+      );
     }
   }
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
