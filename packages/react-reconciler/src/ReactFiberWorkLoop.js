@@ -1563,8 +1563,8 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
     let curHostRoot = root.current
     let wipHostRoot = curHostRoot.alternate
     console.log(
-      "cur tree:", tree2XML(curHostRoot),
-      "wip tree:", wipHostRoot && tree2XML(wipHostRoot, curHostRoot),
+      "cur tree:\n", tree2XML(curHostRoot),
+      "wip tree:\n", wipHostRoot && tree2XML(wipHostRoot, curHostRoot),
       "\ncurHostRoot === wipHostRoot: ", curHostRoot === wipHostRoot
     )
     // XXX

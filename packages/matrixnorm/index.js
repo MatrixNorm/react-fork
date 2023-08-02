@@ -6,7 +6,7 @@ import type { Fiber, FiberRoot } from 'react-reconciler/src/ReactInternalTypes';
 import { fiberInfoShort } from './print'
 
 export * from './print';
-export * from './fiberTree';
+export { fiberTreeToXMLv3 as fiberTreeToXML } from './fiberTree';
 
 export function fiberTreeToXML2(startNode: Fiber): string {
   const tab = "  ";
@@ -35,7 +35,7 @@ export function fiberTreeToXML2(startNode: Fiber): string {
 
     return result;
   }
-  
+
   return do_work(startNode);
 }
 
@@ -58,7 +58,7 @@ function* iterFiberTree(node: Fiber): FiberTreeGenerator {
 function* iterFiberTreeX(node: Fiber): FiberTreeGenerator {
   if (node.child) {
     yield ["enter", node];
-    for(let res of iterFiberTreeX(node.child)) {
+    for (let res of iterFiberTreeX(node.child)) {
       yield res;
     }
     yield ["leave", node];
@@ -66,7 +66,7 @@ function* iterFiberTreeX(node: Fiber): FiberTreeGenerator {
     yield ["leaf", node];
   }
   if (node.sibling) {
-    for(let res of iterFiberTreeX(node.sibling)) {
+    for (let res of iterFiberTreeX(node.sibling)) {
       yield res;
     }
   }
@@ -76,7 +76,7 @@ function* iterFiberTreeY(node: Fiber): FiberTreeGenerator {
   while (node) {
     if (node.child) {
       yield ["enter", node];
-      for(let res of iterFiberTreeY(node.child)) {
+      for (let res of iterFiberTreeY(node.child)) {
         yield res;
       }
       yield ["leave", node];
@@ -102,7 +102,7 @@ const fiberTreeToXMLWithGenerator = (generator: Fiber => FiberTreeGenerator) => 
     if (phase === "enter") {
       d++;
       result += `${tab.repeat(d)}<${fibInfo}>\n`;
-    } else if(phase === "leave") {
+    } else if (phase === "leave") {
       result += `${tab.repeat(d)}</${fibInfo}>\n`;
       d--;
     } else {
