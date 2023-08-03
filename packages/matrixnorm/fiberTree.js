@@ -28,11 +28,9 @@ export const fiberTreeToObject = (node: Fiber): Object => {
 export function fiberTreeToXMLv1(wipHostRoot: Fiber, curHostRoot: Fiber | null = null): string {
   const tab = " ".repeat(2);
   // how deep from the root tree is traversed
-  let depth = -1;
+  let depth = 0;
 
   function __doWorkRecur(node: Fiber): string {
-    depth++;
-
     const children = __getAllChildrenOfFiber(node);
     const padding = tab.repeat(depth);
     const fibInfo = fiberInfoShort(node);
@@ -43,19 +41,17 @@ export function fiberTreeToXMLv1(wipHostRoot: Fiber, curHostRoot: Fiber | null =
       result += `${padding}<${fibInfo} />\n`;
     } else {
       result += `${padding}<${fibInfo}>\n`;
+      depth++;
       for (let kid of children) {
         result += __doWorkRecur(kid);
       }
+      depth--;
       result += `${padding}</${fibInfo}>\n`;
     }
-
-    depth--;
     return result;
   }
 
   function __doWorkRecur2(node: Fiber, curNodesSet: Set<Fiber>): string {
-    depth++;
-
     const children = __getAllChildrenOfFiber(node);
     const padding = tab.repeat(depth);
     const fibInfo = fiberInfoShort(node);
@@ -70,13 +66,13 @@ export function fiberTreeToXMLv1(wipHostRoot: Fiber, curHostRoot: Fiber | null =
       result += `${padding}${prefix}<${fibInfo} />\n`;
     } else {
       result += `${padding}${prefix}<${fibInfo}>\n`;
+      depth++;
       for (let kid of children) {
         result += recurTo(kid);
       }
+      depth--;
       result += `${padding}${prefix}</${fibInfo}>\n`;
     }
-
-    depth--;
     return result;
   }
 
@@ -100,11 +96,9 @@ export function fiberTreeToXMLv1(wipHostRoot: Fiber, curHostRoot: Fiber | null =
 export function fiberTreeToXMLv2(wipHostRoot: Fiber, curHostRoot: Fiber | null = null): string {
   const tab = " ".repeat(2);
   // how deep from the root tree is traversed
-  let depth = -1;
+  let depth = 0;
 
   function __doWorkRecur(node: Fiber, curNodesSet: Set<Fiber> | null = null): string {
-    depth++;
-
     const children = __getAllChildrenOfFiber(node);
     const padding = tab.repeat(depth);
     const fibInfo = fiberInfoShort(node);
@@ -119,13 +113,13 @@ export function fiberTreeToXMLv2(wipHostRoot: Fiber, curHostRoot: Fiber | null =
       result += `${padding}${prefix}<${fibInfo} />\n`;
     } else {
       result += `${padding}${prefix}<${fibInfo}>\n`;
+      depth++;
       for (let kid of children) {
         result += recurTo(kid);
       }
+      depth--;
       result += `${padding}${prefix}</${fibInfo}>\n`;
     }
-
-    depth--;
     return result;
   }
 

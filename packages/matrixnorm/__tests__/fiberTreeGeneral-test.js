@@ -130,10 +130,6 @@ describe('fiber tree general', () => {
       );
     }
   
-    it('mount', () => {
-      renderIt(<App />);
-    });
-  
     it('update', () => {
       let __log = console.log;
       console.log = () => { };

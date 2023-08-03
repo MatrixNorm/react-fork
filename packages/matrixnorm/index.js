@@ -6,8 +6,8 @@ import type { Fiber, FiberRoot } from 'react-reconciler/src/ReactInternalTypes';
 import { fiberInfoShort } from './print'
 
 export * from './print';
-export { fiberTreeToXMLv3 as fiberTreeToXML } from './fiberTree';
-export { fiberTreeToXMLv1 as fiberTreeToXML2 } from './fiberTree2';
+export { fiberTreeToXMLv2 as fiberTreeToXML } from './fiberTree';
+export { fiberTreeToXMLv4 as fiberTreeToXML2 } from './fiberTree2';
 
 type Phase = "enter" | "leave" | "leaf";
 type FiberTreeGenerator = Generator<[Phase, Fiber], void, void>
