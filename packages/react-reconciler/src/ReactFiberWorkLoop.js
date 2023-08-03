@@ -1570,7 +1570,7 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
     // XXX
     // XXX
     // XXX
-    console.log = () => {}
+    //console.log = () => {}
   }
   workInProgress = rootWorkInProgress;
   workInProgressRootRenderLanes = renderLanes = lanes;

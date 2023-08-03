@@ -2518,7 +2518,8 @@ export function commitMutationEffects(
     let toXML3Y = matrixnorm.fiberTreeToXML3Y;
      if (wipHostRoot) {
       let xml = toXML(wipHostRoot);
-      console.log(toXML(wipHostRoot));
+      console.log('wipTree:\n\n', toXML(wipHostRoot));
+      console.log('toXML2\n', toXML2(wipHostRoot));
       console.log(
         toXML2(wipHostRoot) === xml,
         toXML3(wipHostRoot) === xml,

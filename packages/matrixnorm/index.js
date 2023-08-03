@@ -7,37 +7,7 @@ import { fiberInfoShort } from './print'
 
 export * from './print';
 export { fiberTreeToXMLv3 as fiberTreeToXML } from './fiberTree';
-
-export function fiberTreeToXML2(startNode: Fiber): string {
-  const tab = "  ";
-  let depth = -1;
-
-  function do_work(node: Fiber): string {
-    let result;
-
-    depth++;
-    const padding = tab.repeat(depth);
-    const fibInfo = fiberInfoShort(node);
-
-    if (node.child) {
-      result = `${padding}<${fibInfo}>\n`;
-      result += do_work(node.child);
-      result += `${padding}</${fibInfo}>\n`;
-    } else {
-      result = `${padding}<${fibInfo} />\n`;
-    }
-
-    depth--;
-
-    if (node.sibling) {
-      result += do_work(node.sibling);
-    }
-
-    return result;
-  }
-
-  return do_work(startNode);
-}
+export { fiberTreeToXMLv1 as fiberTreeToXML2 } from './fiberTree2';
 
 type Phase = "enter" | "leave" | "leaf";
 type FiberTreeGenerator = Generator<[Phase, Fiber], void, void>
