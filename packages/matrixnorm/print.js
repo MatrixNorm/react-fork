@@ -21,8 +21,11 @@ export const getFiberType = (fiber: Fiber): string => {
     case 15: {
       return `simpleMemo type:${fiber.type.name}`
     }
-    default:
-      return fiber.type;
+    default: {
+      let id = fiber.pendingProps["id"];
+      return id ? `${fiber.type}#${id}` : fiber.type;
+    }
+      
   }
 };
 

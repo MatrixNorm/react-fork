@@ -2528,7 +2528,9 @@ export function commitMutationEffects(
       );
     }
   }
+  console.log(document.body.innerHTML);
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
+  console.log(document.body.innerHTML)
   setCurrentDebugFiberInDEV(finishedWork);
 
   inProgressLanes = null;

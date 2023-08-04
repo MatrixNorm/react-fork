@@ -332,7 +332,11 @@ export function reconcileChildren(
   nextChildren: any,
   renderLanes: Lanes,
 ) {
-  console.log('reconcileChildren', 'nextChildren', JSON.stringify(matrixnorm.elementInfo(nextChildren), null, 2))
+  console.log(
+    'nextChildren:\n',
+    JSON.stringify(matrixnorm.elementInfo(nextChildren), null, 2),
+    matrixnorm.getStackTrace(4)
+  )
   if (current === null) {
     // If this is a fresh new component that hasn't been rendered yet, we
     // won't update its child set by applying minimal side-effects. Instead,
@@ -3696,6 +3700,11 @@ function bailoutOnAlreadyFinishedWork(
 
   // This fiber doesn't have work, but its subtree does. Clone the child
   // fibers and continue.
+  console.log(
+    `This fiber doesn't have work, but its subtree does. Clone the child fibers and continue.`,
+    `\nwip: ${matrixnorm.fiberInfo(workInProgress)}`,
+    `\ncur: ${matrixnorm.fiberInfo(current)}`
+  )
   cloneChildFibers(current, workInProgress);
   return workInProgress.child;
 }
@@ -3793,6 +3802,7 @@ function attemptEarlyBailoutIfNoScheduledUpdate(
   workInProgress: Fiber,
   renderLanes: Lanes,
 ) {
+  console.log("===== attemptEarlyBailoutIfNoScheduledUpdate =====")
   // This fiber does not have any pending work. Bailout without entering
   // the begin phase. There's still some bookkeeping we that needs to be done
   // in this optimized path, mostly pushing stuff onto the stack.

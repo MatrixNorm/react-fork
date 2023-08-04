@@ -13,6 +13,7 @@ import type {Fiber} from './ReactInternalTypes';
 import type {Lanes} from './ReactFiberLane';
 import type {ThenableState} from './ReactFiberThenable';
 
+import * as matrixnorm from 'matrixnorm';
 import getComponentNameFromFiber from 'react-reconciler/src/getComponentNameFromFiber';
 import {
   Placement,

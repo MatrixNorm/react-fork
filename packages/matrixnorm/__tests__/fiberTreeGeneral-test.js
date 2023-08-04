@@ -146,5 +146,62 @@ describe('fiber tree general', () => {
       });
     });
   });
+
+  describe('xxx', () => {
+    function Left() {
+      const [count, setCount] = React.useState(0);
+  
+      const incrementCount = () => {
+        setCount(prev => prev + 1);
+      };
+  
+      return (
+        <main id="left">
+          <button onClick={incrementCount}></button>
+          <span>{count}</span>
+        </main>
+      );
+    }
+
+    function Right() {
+      const [count, setCount] = React.useState(0);
+  
+      const incrementCount = () => {
+        setCount(prev => prev + 1);
+      };
+  
+      return (
+        <main id="right">
+          <button onClick={incrementCount}></button>
+          <span>{count}</span>
+        </main>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Left />
+          <Right />
+        </div>
+      );
+    }
+  
+    it('update', () => {
+      let __log = console.log;
+      console.log = () => { };
+  
+      renderIt(<App />);
+  
+      console.log = __log;
+      console.log('=== START UPDATE ===');
+  
+      ReactTestUtils.act(() => {
+        containerForReactComponent
+          .querySelector('#right button')
+          .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+    });
+  });
   
 });
