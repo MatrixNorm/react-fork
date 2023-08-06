@@ -2510,27 +2510,28 @@ export function commitMutationEffects(
 
   setCurrentDebugFiberInDEV(finishedWork);
   {
-    let wipHostRoot = root.current.alternate;
+    let curHostRoot = root.current;
+    let wipHostRoot = curHostRoot.alternate;
     let toXML = matrixnorm.fiberTreeToXML;
-    let toXML2 = matrixnorm.fiberTreeToXML2;
-    let toXML3 = matrixnorm.fiberTreeToXML3;
-    let toXML3X = matrixnorm.fiberTreeToXML3X;
-    let toXML3Y = matrixnorm.fiberTreeToXML3Y;
+    // let toXML2 = matrixnorm.fiberTreeToXML2;
+    // let toXML3 = matrixnorm.fiberTreeToXML3;
+    // let toXML3X = matrixnorm.fiberTreeToXML3X;
+    // let toXML3Y = matrixnorm.fiberTreeToXML3Y;
      if (wipHostRoot) {
-      let xml = toXML(wipHostRoot);
-      console.log('wipTree:\n\n', toXML(wipHostRoot));
-      console.log('toXML2\n', toXML2(wipHostRoot));
-      console.log(
-        toXML2(wipHostRoot) === xml,
-        toXML3(wipHostRoot) === xml,
-        toXML3X(wipHostRoot) === xml,
-        toXML3Y(wipHostRoot) === xml
-      );
+      let xml = toXML(wipHostRoot, curHostRoot);
+      console.log('wipTree:\n', xml);
+      // console.log('toXML2\n', toXML2(wipHostRoot));
+      // console.log(
+      //   toXML2(wipHostRoot) === xml,
+      //   toXML3(wipHostRoot) === xml,
+      //   toXML3X(wipHostRoot) === xml,
+      //   toXML3Y(wipHostRoot) === xml
+      // );
     }
   }
   console.log(document.body.innerHTML);
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
-  console.log(document.body.innerHTML)
+  console.log(matrixnorm.prettyHtml(document.body.innerHTML))
   setCurrentDebugFiberInDEV(finishedWork);
 
   inProgressLanes = null;

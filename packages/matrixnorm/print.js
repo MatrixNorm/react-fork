@@ -2,6 +2,7 @@
  * @flow
  */
 
+import prettier from 'prettier';
 import type { Fiber, FiberRoot } from 'react-reconciler/src/ReactInternalTypes';
 
 export const getFiberType = (fiber: Fiber): string => {
@@ -25,7 +26,7 @@ export const getFiberType = (fiber: Fiber): string => {
       let id = fiber.pendingProps["id"];
       return id ? `${fiber.type}#${id}` : fiber.type;
     }
-      
+
   }
 };
 
@@ -66,3 +67,7 @@ export const elementInfo = (element: any): string | null => {
 export const domElementInfo = (domElement: any): string => {
   return `DOM elem <${domElement?.tagName}>`
 };
+
+export const prettyHtml = (html: string): string => {
+  return prettier.format(html, { parser: "html" })
+}

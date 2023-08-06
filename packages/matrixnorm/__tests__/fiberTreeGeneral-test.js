@@ -35,12 +35,12 @@ describe('fiber tree general', () => {
     function App() {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
-  
+
       const incrementCount = () => {
         console.log('=== incrementCount ===');
         setCount(prev => prev + 1);
       };
-  
+
       return (
         <main>
           <button onClick={incrementCount}></button>
@@ -48,20 +48,20 @@ describe('fiber tree general', () => {
         </main>
       );
     }
-  
+
     it('mount', () => {
       renderIt(<App />);
     });
-  
+
     it('update', () => {
       let __log = console.log;
       console.log = () => { };
-  
+
       renderIt(<App />);
-  
+
       console.log = __log;
       console.log('=== START UPDATE ===');
-  
+
       ReactTestUtils.act(() => {
         containerForReactComponent
           .querySelector('button')
@@ -69,7 +69,7 @@ describe('fiber tree general', () => {
       });
     });
   });
-  
+
   describe('case2', () => {
     function App() {
       console.log('=== App ===');
@@ -98,12 +98,12 @@ describe('fiber tree general', () => {
     it('update', () => {
       let __log = console.log;
       console.log = () => { };
-  
+
       renderIt(<App />);
-  
+
       console.log = __log;
       console.log('=== START UPDATE ===');
-  
+
       ReactTestUtils.act(() => {
         containerForReactComponent
           .querySelector('button')
@@ -116,12 +116,12 @@ describe('fiber tree general', () => {
     function App() {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
-  
+
       const incrementCount = () => {
         console.log('=== incrementCount ===');
         setCount(prev => prev + 1);
       };
-  
+
       return (
         <main>
           <button onClick={incrementCount}></button>
@@ -129,16 +129,16 @@ describe('fiber tree general', () => {
         </main>
       );
     }
-  
+
     it('update', () => {
       let __log = console.log;
       console.log = () => { };
-  
+
       renderIt(<App />);
-  
+
       console.log = __log;
       console.log('=== START UPDATE ===');
-  
+
       ReactTestUtils.act(() => {
         containerForReactComponent
           .querySelector('button')
@@ -147,29 +147,24 @@ describe('fiber tree general', () => {
     });
   });
 
-  describe('xxx', () => {
-    function Left() {
+  it('reuse_nonchanged_subtree', () => {
+    function NonChanged() {
       const [count, setCount] = React.useState(0);
-  
-      const incrementCount = () => {
-        setCount(prev => prev + 1);
-      };
-  
       return (
         <main id="left">
-          <button onClick={incrementCount}></button>
+          <button></button>
           <span>{count}</span>
         </main>
       );
     }
 
-    function Right() {
+    function Mutable() {
       const [count, setCount] = React.useState(0);
-  
+
       const incrementCount = () => {
         setCount(prev => prev + 1);
       };
-  
+
       return (
         <main id="right">
           <button onClick={incrementCount}></button>
@@ -181,27 +176,109 @@ describe('fiber tree general', () => {
     function App() {
       return (
         <div>
-          <Left />
-          <Right />
+          <NonChanged />
+          <Mutable />
         </div>
       );
     }
-  
-    it('update', () => {
+
+    let __log = console.log;
+    console.log = () => { };
+
+    renderIt(<App />);
+
+    console.log = __log;
+    console.log('=== START UPDATE ===');
+
+    /*
+      with NoLog():
+        renderIt(<App />);
+    */
+
+    ReactTestUtils.act(() => {
+      containerForReactComponent
+        .querySelector('#right button')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+  });
+
+  describe('memo', () => {
+    function Son({ e }) {
+      const [pi, setPi] = React.useState(3.14);
+      return (
+        <ul>
+          <li id="pi" onClick={() => setPi(3.1415)}>{pi}</li>
+          <li>{e}</li>
+        </ul>
+      );
+    }
+
+    function Father({ son }) {
+      const [msg, setMsg] = React.useState("moose");
+
+      const incrementCount = () => {
+        setMsg("bear");
+      };
+
+      return (
+        <main id="father">
+          {son}
+          <button onClick={incrementCount}></button>
+          <span>{msg}</span>
+        </main>
+      );
+    }
+
+    it('without', () => {
       let __log = console.log;
       console.log = () => { };
-  
-      renderIt(<App />);
-  
+
+      renderIt(<Father son={<Son e={2.72} />} />);
+
       console.log = __log;
       console.log('=== START UPDATE ===');
-  
+
       ReactTestUtils.act(() => {
         containerForReactComponent
-          .querySelector('#right button')
+          .querySelector('#father button')
+          .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+    });
+
+    it('with', () => {
+      const MemoizedSon = React.memo(Son);
+
+      let __log = console.log;
+      console.log = () => { };
+
+      renderIt(<Father son={<MemoizedSon e={2.72} />} />);
+
+      console.log = __log;
+      console.log('=== START UPDATE ===');
+
+      ReactTestUtils.act(() => {
+        containerForReactComponent
+          .querySelector('#father button')
+          .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      });
+    });
+
+    it('with_son_update', () => {
+      const MemoizedSon = React.memo(Son);
+
+      let __log = console.log;
+      console.log = () => { };
+
+      renderIt(<Father son={<MemoizedSon e={2.72} />} />);
+
+      console.log = __log;
+      console.log('=== START UPDATE ===');
+
+      ReactTestUtils.act(() => {
+        containerForReactComponent
+          .querySelector('#pi')
           .dispatchEvent(new MouseEvent('click', { bubbles: true }));
       });
     });
   });
-  
 });

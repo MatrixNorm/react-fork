@@ -1521,6 +1521,12 @@ export function cloneChildFibers(
   current: Fiber | null,
   workInProgress: Fiber,
 ): void {
+  console.log(
+    `This fiber doesn't have work, but its subtree does. Clone the child fibers and continue.`,
+    `\nwip: ${matrixnorm.fiberInfo(workInProgress)}`,
+    `\ncur: ${matrixnorm.fiberInfo(current)}`,
+    matrixnorm.getStackTrace(4),
+  )
   if (current !== null && workInProgress.child !== current.child) {
     throw new Error('Resuming work not yet implemented.');
   }

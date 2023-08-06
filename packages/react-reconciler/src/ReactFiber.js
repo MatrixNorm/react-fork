@@ -266,8 +266,12 @@ export function resolveLazyComponentTag(Component: Function): WorkTag {
 
 // This is used to create an alternate fiber to do work on.
 export function createWorkInProgress(current: Fiber, pendingProps: any): Fiber {
-  console.log('createWorkInProgress from current', matrixnorm.fiberInfo(current))
   let workInProgress = current.alternate;
+  console.log(
+    'createWorkInProgress',
+    `\ncur: ${matrixnorm.fiberInfo(current)}`,
+    `\nwip: ${matrixnorm.fiberInfo(workInProgress)}`
+  )
   if (workInProgress === null) {
     // We use a double buffering pooling technique because we know that we'll
     // only ever need at most two versions of a tree. We pool the "other" unused

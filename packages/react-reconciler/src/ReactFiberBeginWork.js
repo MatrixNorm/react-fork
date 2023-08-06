@@ -3700,11 +3700,6 @@ function bailoutOnAlreadyFinishedWork(
 
   // This fiber doesn't have work, but its subtree does. Clone the child
   // fibers and continue.
-  console.log(
-    `This fiber doesn't have work, but its subtree does. Clone the child fibers and continue.`,
-    `\nwip: ${matrixnorm.fiberInfo(workInProgress)}`,
-    `\ncur: ${matrixnorm.fiberInfo(current)}`
-  )
   cloneChildFibers(current, workInProgress);
   return workInProgress.child;
 }

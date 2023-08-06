@@ -109,22 +109,12 @@ export const fiberTreeToXML3Y: Fiber => string = fiberTreeToXMLWithGenerator(ite
 export const getStackTrace = (depth: number): string => {
   let obj = {};
   Error.captureStackTrace(obj, getStackTrace);
-
   let stackStr = obj.stack
     .split('\n')
     .slice(1, depth + 1)
-    // .map(frame => {
-    //   console.log(frame)
-    //   let frameData = frame.trim().split(' ');
-    //   let functionName = frameData[1];
-    //   let filePath = frameData[2].split('/');
-    //   let fileName = filePath[filePath.length - 1];
-    //   fileName = fileName.substring(0, fileName.lastIndexOf(':'));
-    //   return {
-    //     functionName,
-    //     fileName,
-    //   };
-    // })
+    .map(frame => {
+      return frame.trim().slice(3).replace('/home/ubuntu/projects/react-fork/packages/', '');
+    })
     // .map(({functionName, fileName}) => `${functionName}:: ${fileName}`)
     .join('\n');
 
