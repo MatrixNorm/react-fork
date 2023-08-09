@@ -27,6 +27,11 @@ Single test from module:
 $ yarn test ./packages/matrixnorm/__tests__/useState-test.js -t mount
 ```
 
+```
+$ ./runtest.sh ./packages/matrixnorm/__tests__/fiberTreeGeneral-test.js -t "case1 update"
+$ ./debugtest.sh ./packages/matrixnorm/__tests__/fiberTreeGeneral-test.js -t "case1 update"
+```
+
 ## Run test with debugger
 
 XXX
