@@ -19,6 +19,7 @@ import type {
 import type {Lane, Lanes} from './ReactFiberLane';
 import type {OffscreenInstance} from './ReactFiberOffscreenComponent';
 
+import * as matrixnorm from 'matrixnorm';
 import {
   warnAboutUpdateOnNotYetMountedFiberInDEV,
   throwIfInfiniteUpdateLoopDetected,
@@ -48,6 +49,7 @@ let concurrentQueuesIndex = 0;
 let concurrentlyUpdatedLanes: Lanes = NoLanes;
 
 export function finishQueueingConcurrentUpdates(): void {
+  console.log(matrixnorm.getStackTrace(6));
   const endIndex = concurrentQueuesIndex;
   concurrentQueuesIndex = 0;
 
@@ -92,6 +94,12 @@ function enqueueUpdate(
   update: ConcurrentUpdate | null,
   lane: Lane,
 ) {
+  console.log(
+    `fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
+    queue,
+    update,
+    matrixnorm.getStackTrace(4)
+  );
   // Don't update the `childLanes` on the return path yet. If we already in
   // the middle of rendering, wait until after it has completed.
   concurrentQueues[concurrentQueuesIndex++] = fiber;

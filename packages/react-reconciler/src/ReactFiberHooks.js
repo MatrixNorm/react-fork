@@ -29,6 +29,8 @@ import type {HookFlags} from './ReactHookEffectTags';
 import type {Flags} from './ReactFiberFlags';
 import type {TransitionStatus} from './ReactFiberConfig';
 
+import * as matrixnorm from 'matrixnorm';
+import * as util from 'util';
 import {NotPendingTransition as NoPendingHostTransition} from './ReactFiberConfig';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
 import {
@@ -448,6 +450,17 @@ export function renderWithHooks<Props, SecondArg>(
   secondArg: SecondArg,
   nextRenderLanes: Lanes,
 ): any {
+  {
+    
+    let mn = matrixnorm;
+    console.log(
+      ` wip: ${mn.fiberInfo(workInProgress)}\n`,
+      `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
+      `cur: ${mn.fiberInfo(current)}`,
+      mn.getStackTrace(3)
+    );
+  }
+  
   renderLanes = nextRenderLanes;
   currentlyRenderingFiber = workInProgress;
 
@@ -565,7 +578,14 @@ export function renderWithHooks<Props, SecondArg>(
   }
 
   finishRenderingHooks(current, workInProgress);
-
+  {
+    let mn = matrixnorm;
+    console.log(
+      ` wip: ${mn.fiberInfo(workInProgress)}\n`,
+      `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
+      `cur: ${mn.fiberInfo(current)}`
+    );
+  }
   return children;
 }
 
@@ -1975,6 +1995,7 @@ function mountStateImpl<S>(initialState: (() => S) | S): Hook {
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
+  console.log(matrixnorm.getStackTrace(4));
   const hook = mountStateImpl(initialState);
   const queue = hook.queue;
   const dispatch: Dispatch<BasicStateAction<S>> = (dispatchSetState.bind(
@@ -3005,6 +3026,13 @@ function dispatchSetState<S, A>(
     eagerState: null,
     next: (null: any),
   };
+
+  console.log(
+    ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
+    `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
+    update,
+    matrixnorm.getStackTrace(2)
+  );
 
   if (isRenderPhaseUpdate(fiber)) {
     enqueueRenderPhaseUpdate(queue, update);

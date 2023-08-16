@@ -230,7 +230,6 @@ function appendAllChildren(
       //  `node: ${matrixnorm.fiberInfo(node)}`,
       //  `wip: ${matrixnorm.fiberInfo(workInProgress)}`);
       if (node.tag === HostComponent || node.tag === HostText) {
-        console.log(`completeWork::DOM append ${node.stateNode} to ${parent}`)
         appendInitialChild(parent, node.stateNode);
       } else if (
         node.tag === HostPortal ||

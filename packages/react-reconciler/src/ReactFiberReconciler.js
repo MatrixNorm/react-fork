@@ -25,6 +25,7 @@ import type {ReactNodeList} from 'shared/ReactTypes';
 import type {Lane} from './ReactFiberLane';
 import type {SuspenseState} from './ReactFiberSuspenseComponent';
 
+import * as matrixnorm from 'matrixnorm';
 import {
   findCurrentHostFiber,
   findCurrentHostFiberWithNoPortals,
@@ -374,7 +375,8 @@ export function updateContainer(
     }
     update.callback = callback;
   }
-
+  console.log(matrixnorm.fiberInfo(current),
+    "\nupdate: ", update)
   const root = enqueueUpdate(current, update, lane);
   if (root !== null) {
     scheduleUpdateOnFiber(root, current, lane);
