@@ -685,7 +685,7 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
 ) {
-  console.log(matrixnorm.getStackTrace(3))
+  console.log(matrixnorm.getStackTrace(8))
   if (__DEV__) {
     if (isRunningInsertionEffect) {
       console.error('useInsertionEffect must not schedule updates.');
@@ -741,7 +741,7 @@ export function scheduleUpdateOnFiber(
       }
     }
 
-    //XXX warnIfUpdatesNotWrappedWithActDEV(fiber);
+    warnIfUpdatesNotWrappedWithActDEV(fiber);
 
     if (enableProfilerTimer && enableProfilerNestedUpdateScheduledHook) {
       if (
@@ -795,8 +795,14 @@ export function scheduleUpdateOnFiber(
     }
 
     ensureRootIsScheduled(root);
-    console.log(lane === SyncLane, executionContext === NoContext, (fiber.mode & ConcurrentMode) === NoMode)
-    if (
+    
+    console.log(
+      lane === SyncLane,
+      executionContext === NoContext,
+      (fiber.mode & ConcurrentMode) === NoMode
+    );
+    
+      if (
       lane === SyncLane &&
       executionContext === NoContext &&
       (fiber.mode & ConcurrentMode) === NoMode
@@ -1279,6 +1285,7 @@ function markRootSuspended(root: FiberRoot, suspendedLanes: Lanes) {
 // This is the entry point for synchronous tasks that don't go
 // through Scheduler
 export function performSyncWorkOnRoot(root: FiberRoot): null {
+  console.log(matrixnorm.getStackTrace(8))
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     syncNestedUpdateFlag();
   }

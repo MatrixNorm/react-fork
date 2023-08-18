@@ -11,6 +11,7 @@ import type {FiberRoot} from './ReactInternalTypes';
 import type {Lane} from './ReactFiberLane';
 import type {PriorityLevel} from 'scheduler/src/SchedulerPriorities';
 
+import * as matrixnorm from 'matrixnorm';
 import {enableDeferRootSchedulingToMicrotask} from 'shared/ReactFeatureFlags';
 import {
   NoLane,
@@ -100,11 +101,12 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
       lastScheduledRoot = root;
     }
   }
-
+  
   // Any time a root received an update, we set this to true until the next time
   // we process the schedule. If it's false, then we can quickly exit flushSync
   // without consulting the schedule.
-  mightHavePendingSyncWork = true;
+
+  mightHavePendingSyncWork = true; // !!!
 
   // At the end of the current event, go through each of the roots and ensure
   // there's a task scheduled for each one at the correct priority.
@@ -119,7 +121,7 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
     console.log("2222222222222222222222222222222")
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
-      scheduleImmediateTask(processRootScheduleInMicrotask);
+      scheduleImmediateTask(processRootScheduleInMicrotask); // flushSyncWorkOnLegacyRootsOnly
     }
   }
 
@@ -154,6 +156,7 @@ export function flushSyncWorkOnLegacyRootsOnly() {
 }
 
 function flushSyncWorkAcrossRoots_impl(onlyLegacy: boolean) {
+  console.log(matrixnorm.getStackTrace(7))
   if (isFlushingWork) {
     // Prevent reentrancy.
     // TODO: Is this overly defensive? The callers must check the execution
@@ -233,7 +236,7 @@ function throwError(error: mixed) {
 }
 
 function processRootScheduleInMicrotask() {
-  console.log("processRootScheduleInMicrotask")
+  console.log(matrixnorm.getStackTrace(4))
   // This function is always called inside a microtask. It should never be
   // called synchronously.
   didScheduleMicrotask = false;
@@ -455,14 +458,12 @@ function cancelCallback(callbackNode: mixed) {
 }
 
 function scheduleImmediateTask(cb: () => mixed) {
-  console.log("scheduleImmediateTask")
   if (__DEV__ && ReactCurrentActQueue.current !== null) {
     // Special case: Inside an `act` scope, we push microtasks to the fake `act`
     // callback queue. This is because we currently support calling `act`
     // without awaiting the result. The plan is to deprecate that, and require
     // that you always await the result so that the microtasks have a chance to
     // run. But it hasn't happened yet.
-    console.log('AAAAAAAAAAAAAAAAAAAAAAaaa')
     ReactCurrentActQueue.current.push(() => {
       cb();
       return null;
@@ -471,7 +472,6 @@ function scheduleImmediateTask(cb: () => mixed) {
   // TODO: Can we land supportsMicrotasks? Which environments don't support it?
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
-    console.log("CCCCCCCCCCCCCCCCCCCCCCCCc")
     scheduleMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.
       // https://github.com/facebook/react/issues/22459
@@ -486,11 +486,9 @@ function scheduleImmediateTask(cb: () => mixed) {
         // wrong semantically but it prevents an infinite loop. The bug is
         // Safari's, not ours, so we just do our best to not crash even though
         // the behavior isn't completely correct.
-        console.log('BBBBBBBBBBBBBBBBBBBBBBbb')
         Scheduler_scheduleCallback(ImmediateSchedulerPriority, cb);
         return;
       }
-      console.log("***************")
       cb();
     });
   } else {

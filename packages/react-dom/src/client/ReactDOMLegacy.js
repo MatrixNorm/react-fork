@@ -14,6 +14,7 @@ import type {
 import type {FiberRoot} from 'react-reconciler/src/ReactInternalTypes';
 import type {ReactNodeList} from 'shared/ReactTypes';
 
+import * as matrixnorm from 'matrixnorm';
 import {clearContainer} from 'react-dom-bindings/src/client/ReactFiberConfigDOM';
 import {
   getInstanceFromNode,
@@ -184,6 +185,7 @@ function legacyCreateRootFromDOMContainer(
     listenToAllSupportedEvents(rootContainerElement);
 
     // Initial mount should not be batched.
+    // what is flushSync for?
     flushSync(() => {
       updateContainer(initialChildren, root, parentComponent, callback);
     });
@@ -320,6 +322,7 @@ export function render(
   container: Container,
   callback: ?Function,
 ): React$Component<any, any> | PublicInstance | null {
+  console.log(matrixnorm.getStackTrace(4))
   if (__DEV__) {
     console.error(
       'ReactDOM.render is no longer supported in React 18. Use createRoot ' +

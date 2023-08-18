@@ -2500,6 +2500,7 @@ export function commitMutationEffects(
 
   setCurrentDebugFiberInDEV(finishedWork);
   commitMutationEffectsOnFiber(finishedWork, root, committedLanes);
+  //console.log(document.body.innerHTML)
   setCurrentDebugFiberInDEV(finishedWork);
 
   inProgressLanes = null;

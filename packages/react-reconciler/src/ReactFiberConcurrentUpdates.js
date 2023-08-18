@@ -49,7 +49,7 @@ let concurrentQueuesIndex = 0;
 let concurrentlyUpdatedLanes: Lanes = NoLanes;
 
 export function finishQueueingConcurrentUpdates(): void {
-  console.log(matrixnorm.getStackTrace(6));
+  console.log(matrixnorm.getStackTrace(8));
   const endIndex = concurrentQueuesIndex;
   concurrentQueuesIndex = 0;
 
