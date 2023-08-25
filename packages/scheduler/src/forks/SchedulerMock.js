@@ -12,6 +12,7 @@
 
 import type {PriorityLevel} from '../SchedulerPriorities';
 
+import * as matrixnorm from 'matrixnorm';
 import {
   enableSchedulerDebugging,
   enableProfiling,
@@ -341,6 +342,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
+  console.log(matrixnorm.getStackTrace(4))
   var currentTime = getCurrentTime();
 
   var startTime;

@@ -348,6 +348,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
+  console.log("@@@@@@@@@@@@@@@@@@@")
   var currentTime = getCurrentTime();
 
   var startTime;

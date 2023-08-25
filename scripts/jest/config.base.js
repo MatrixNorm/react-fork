@@ -10,7 +10,7 @@ module.exports = {
     '<rootDir>/scripts/bench/',
   ],
   transform: {
-    '.*': require.resolve('./preprocessor.js'),
+    '.*': require.resolve('./preprocessor.js'),// /home/ubuntu/projects/react-fork/scripts/jest/preprocessor.js
   },
   setupFiles: [require.resolve('./setupEnvironment.js')],
   setupFilesAfterEnv: [require.resolve('./setupTests.js')],

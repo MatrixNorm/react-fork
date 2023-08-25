@@ -7,8 +7,7 @@ describe('root API', () => {
   let ReactDOM;
   let ReactDOMClient;
   let ReactTestUtils;
-
-  global.IS_REACT_ACT_ENVIRONMENT = true;
+  let SchedulerMock;
 
   beforeEach(() => {
     jest.resetModules(); // ???
@@ -17,9 +16,12 @@ describe('root API', () => {
     ReactDOM = require('react-dom');
     ReactDOMClient = require('react-dom/client');
     ReactTestUtils = require('react-dom/test-utils');
+    SchedulerMock = require('scheduler/unstable_mock');
 
     containerForReactComponent = document.createElement('div');
     document.body.appendChild(containerForReactComponent);
+
+    global.IS_REACT_ACT_ENVIRONMENT = true;
   });
 
   afterEach(() => {
@@ -52,10 +54,14 @@ describe('root API', () => {
      */
   });
 
-  it('new_noact', () => {
-      const root = ReactDOMClient.createRoot(containerForReactComponent);
-      root.render(<App/>);
-      console.log(document.body.innerHTML)
+  it('new_noact', async () => {
+    global.IS_REACT_ACT_ENVIRONMENT = false;
+
+    const root = ReactDOMClient.createRoot(containerForReactComponent);
+    root.render(<App/>);
+    await new Promise(process.nextTick);
+    SchedulerMock.unstable_flushNumberOfYields(1)
+    console.log(document.body.innerHTML)
   });
 
   it('old_act', () => {

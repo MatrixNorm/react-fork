@@ -156,7 +156,6 @@ export function flushSyncWorkOnLegacyRootsOnly() {
 }
 
 function flushSyncWorkAcrossRoots_impl(onlyLegacy: boolean) {
-  console.log(matrixnorm.getStackTrace(7))
   if (isFlushingWork) {
     // Prevent reentrancy.
     // TODO: Is this overly defensive? The callers must check the execution

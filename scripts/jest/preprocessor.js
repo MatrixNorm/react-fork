@@ -17,6 +17,7 @@ const pathToBabel = path.join(
 const pathToBabelPluginReplaceConsoleCalls = require.resolve(
   '../babel/transform-replace-console-calls'
 );
+
 const pathToBabelPluginAsyncToGenerator = require.resolve(
   '@babel/plugin-transform-async-to-generator'
 );
