@@ -685,7 +685,7 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
 ) {
-  console.log(matrixnorm.getStackTrace(8))
+  console.log(matrixnorm.getStackTrace(4))
   if (__DEV__) {
     if (isRunningInsertionEffect) {
       console.error('useInsertionEffect must not schedule updates.');

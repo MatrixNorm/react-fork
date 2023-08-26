@@ -111,14 +111,12 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
   // At the end of the current event, go through each of the roots and ensure
   // there's a task scheduled for each one at the correct priority.
   if (__DEV__ && ReactCurrentActQueue.current !== null) {
-    console.log("11111111111111111111111111111111")
     // We're inside an `act` scope.
     if (!didScheduleMicrotask_act) {
       didScheduleMicrotask_act = true;
       scheduleImmediateTask(processRootScheduleInMicrotask);
     }
   } else {
-    console.log("2222222222222222222222222222222")
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
       scheduleImmediateTask(processRootScheduleInMicrotask); // flushSyncWorkOnLegacyRootsOnly
@@ -471,6 +469,7 @@ function scheduleImmediateTask(cb: () => mixed) {
   // TODO: Can we land supportsMicrotasks? Which environments don't support it?
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
+    console.log(matrixnorm.getStackTrace(5));
     scheduleMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.
       // https://github.com/facebook/react/issues/22459

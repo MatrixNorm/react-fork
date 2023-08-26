@@ -375,8 +375,11 @@ export function updateContainer(
     }
     update.callback = callback;
   }
-  console.log(matrixnorm.fiberInfo(current),
-    "\nupdate: ", update)
+  console.log(
+    "current fiber:", matrixnorm.fiberInfo(current),
+    "\nupdate:\n", update,
+    matrixnorm.getStackTrace(3)
+  );
   const root = enqueueUpdate(current, update, lane);
   if (root !== null) {
     scheduleUpdateOnFiber(root, current, lane);

@@ -95,10 +95,10 @@ function enqueueUpdate(
   lane: Lane,
 ) {
   console.log(
-    `fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
-    queue,
-    update,
-    matrixnorm.getStackTrace(4)
+    `fiber: ${matrixnorm.fiberInfo(fiber)}`,
+    "\nfiber.updateQueue.shared:", queue,
+    "\nupdate:", update,
+    matrixnorm.getStackTrace(6)
   );
   // Don't update the `childLanes` on the return path yet. If we already in
   // the middle of rendering, wait until after it has completed.
