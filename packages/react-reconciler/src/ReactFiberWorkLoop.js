@@ -685,7 +685,6 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
 ) {
-  console.log(matrixnorm.getStackTrace(3))
   if (__DEV__) {
     if (isRunningInsertionEffect) {
       console.error('useInsertionEffect must not schedule updates.');
@@ -795,7 +794,6 @@ export function scheduleUpdateOnFiber(
     }
 
     ensureRootIsScheduled(root);
-    console.log(lane === SyncLane, executionContext === NoContext, (fiber.mode & ConcurrentMode) === NoMode)
     if (
       lane === SyncLane &&
       executionContext === NoContext &&
@@ -1971,7 +1969,6 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 // The work loop is an extremely hot path. Tell Closure not to inline it.
 /** @noinline */
 function workLoopSync() {
-  console.log('workLoopSync');
   // Perform work without checking if we need to yield between fiber.
   while (workInProgress !== null) {
     performUnitOfWork(workInProgress);

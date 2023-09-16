@@ -109,14 +109,12 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
   // At the end of the current event, go through each of the roots and ensure
   // there's a task scheduled for each one at the correct priority.
   if (__DEV__ && ReactCurrentActQueue.current !== null) {
-    console.log("11111111111111111111111111111111")
     // We're inside an `act` scope.
     if (!didScheduleMicrotask_act) {
       didScheduleMicrotask_act = true;
       scheduleImmediateTask(processRootScheduleInMicrotask);
     }
   } else {
-    console.log("2222222222222222222222222222222")
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
       scheduleImmediateTask(processRootScheduleInMicrotask);
@@ -233,7 +231,6 @@ function throwError(error: mixed) {
 }
 
 function processRootScheduleInMicrotask() {
-  console.log("processRootScheduleInMicrotask")
   // This function is always called inside a microtask. It should never be
   // called synchronously.
   didScheduleMicrotask = false;
@@ -455,14 +452,12 @@ function cancelCallback(callbackNode: mixed) {
 }
 
 function scheduleImmediateTask(cb: () => mixed) {
-  console.log("scheduleImmediateTask")
   if (__DEV__ && ReactCurrentActQueue.current !== null) {
     // Special case: Inside an `act` scope, we push microtasks to the fake `act`
     // callback queue. This is because we currently support calling `act`
     // without awaiting the result. The plan is to deprecate that, and require
     // that you always await the result so that the microtasks have a chance to
     // run. But it hasn't happened yet.
-    console.log('AAAAAAAAAAAAAAAAAAAAAAaaa')
     ReactCurrentActQueue.current.push(() => {
       cb();
       return null;
@@ -471,7 +466,6 @@ function scheduleImmediateTask(cb: () => mixed) {
   // TODO: Can we land supportsMicrotasks? Which environments don't support it?
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
-    console.log("CCCCCCCCCCCCCCCCCCCCCCCCc")
     scheduleMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.
       // https://github.com/facebook/react/issues/22459
@@ -486,11 +480,9 @@ function scheduleImmediateTask(cb: () => mixed) {
         // wrong semantically but it prevents an infinite loop. The bug is
         // Safari's, not ours, so we just do our best to not crash even though
         // the behavior isn't completely correct.
-        console.log('BBBBBBBBBBBBBBBBBBBBBBbb')
         Scheduler_scheduleCallback(ImmediateSchedulerPriority, cb);
         return;
       }
-      console.log("***************")
       cb();
     });
   } else {

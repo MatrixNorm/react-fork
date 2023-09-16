@@ -451,16 +451,19 @@ export function renderWithHooks<Props, SecondArg>(
   nextRenderLanes: Lanes,
 ): any {
   {
-    
     let mn = matrixnorm;
+    //console.log(mn.getStackTrace(4));
     console.log(
-      ` wip: ${mn.fiberInfo(workInProgress)}\n`,
-      `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
-      `cur: ${mn.fiberInfo(current)}`,
-      mn.getStackTrace(3)
+      util.inspect({
+        wip: mn.fiberInfo(workInProgress),
+        cur: mn.fiberInfo(current),
+        currentlyRenderingFiber: mn.fiberInfo(currentlyRenderingFiber),
+        currentHook: currentHook,
+        workInProgressHook: workInProgressHook,
+      }),
     );
   }
-  
+
   renderLanes = nextRenderLanes;
   currentlyRenderingFiber = workInProgress;
 
@@ -495,6 +498,11 @@ export function renderWithHooks<Props, SecondArg>(
   // Using memoizedState to differentiate between mount/update only works if at least one stateful hook is used.
   // Non-stateful hooks (e.g. context) don't get added to memoizedState,
   // so memoizedState would be null during updates and mounts.
+
+  current !== null &&
+    current.memoizedState === null &&
+    console.log('current != null but cur.memoizedState is null');
+
   if (__DEV__) {
     if (current !== null && current.memoizedState !== null) {
       ReactCurrentDispatcher.current = HooksDispatcherOnUpdateInDEV;
@@ -550,6 +558,14 @@ export function renderWithHooks<Props, SecondArg>(
   let children = Component(props, secondArg);
   shouldDoubleInvokeUserFnsInHooksDEV = false;
 
+  console.log(
+    util.inspect({
+      currentlyRenderingFiber: matrixnorm.fiberInfo(currentlyRenderingFiber),
+      currentHook: currentHook,
+      workInProgressHook: workInProgressHook,
+    }),
+  );
+
   // Check if there was a render phase update
   if (didScheduleRenderPhaseUpdateDuringThisPass) {
     // Keep rendering until the component stabilizes (there are no more render
@@ -583,7 +599,7 @@ export function renderWithHooks<Props, SecondArg>(
     console.log(
       ` wip: ${mn.fiberInfo(workInProgress)}\n`,
       `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
-      `cur: ${mn.fiberInfo(current)}`
+      `cur: ${mn.fiberInfo(current)}`,
     );
   }
   return children;
@@ -899,6 +915,7 @@ export function resetHooksOnUnwind(workInProgress: Fiber): void {
 }
 
 function mountWorkInProgressHook(): Hook {
+  console.log(matrixnorm.getStackTrace(3));
   const hook: Hook = {
     memoizedState: null,
 
@@ -920,6 +937,7 @@ function mountWorkInProgressHook(): Hook {
 }
 
 function updateWorkInProgressHook(): Hook {
+  console.log(matrixnorm.getStackTrace(6));
   // This function is used both for updates and for re-renders triggered by a
   // render phase update. It assumes there is either a current hook we can
   // clone, or a work-in-progress hook from a previous render pass that we can
@@ -1995,7 +2013,7 @@ function mountStateImpl<S>(initialState: (() => S) | S): Hook {
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
-  console.log(matrixnorm.getStackTrace(4));
+  console.log(`initialState: ${initialState}`, matrixnorm.getStackTrace(6));
   const hook = mountStateImpl(initialState);
   const queue = hook.queue;
   const dispatch: Dispatch<BasicStateAction<S>> = (dispatchSetState.bind(
@@ -3031,7 +3049,7 @@ function dispatchSetState<S, A>(
     ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
     `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
     update,
-    matrixnorm.getStackTrace(2)
+    matrixnorm.getStackTrace(2),
   );
 
   if (isRenderPhaseUpdate(fiber)) {
