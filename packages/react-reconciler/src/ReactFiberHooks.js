@@ -452,7 +452,6 @@ export function renderWithHooks<Props, SecondArg>(
 ): any {
   {
     let mn = matrixnorm;
-    //console.log(mn.getStackTrace(4));
     console.log(
       util.inspect({
         wip: mn.fiberInfo(workInProgress),
@@ -462,6 +461,10 @@ export function renderWithHooks<Props, SecondArg>(
         workInProgressHook: workInProgressHook,
       }),
     );
+
+    if (current !== null) {
+      console.log(current.memoizedState === workInProgress.memoizedState)
+    }
   }
 
   renderLanes = nextRenderLanes;
@@ -498,10 +501,6 @@ export function renderWithHooks<Props, SecondArg>(
   // Using memoizedState to differentiate between mount/update only works if at least one stateful hook is used.
   // Non-stateful hooks (e.g. context) don't get added to memoizedState,
   // so memoizedState would be null during updates and mounts.
-
-  current !== null &&
-    current.memoizedState === null &&
-    console.log('current != null but cur.memoizedState is null');
 
   if (__DEV__) {
     if (current !== null && current.memoizedState !== null) {
