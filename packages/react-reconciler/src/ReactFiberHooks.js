@@ -450,22 +450,22 @@ export function renderWithHooks<Props, SecondArg>(
   secondArg: SecondArg,
   nextRenderLanes: Lanes,
 ): any {
-  {
-    let mn = matrixnorm;
-    console.log(
-      util.inspect({
-        wip: mn.fiberInfo(workInProgress),
-        cur: mn.fiberInfo(current),
-        currentlyRenderingFiber: mn.fiberInfo(currentlyRenderingFiber),
-        currentHook: currentHook,
-        workInProgressHook: workInProgressHook,
-      }),
-    );
+  // {
+  //   let mn = matrixnorm;
+  //   console.log(
+  //     util.inspect({
+  //       wip: mn.fiberInfo(workInProgress),
+  //       cur: mn.fiberInfo(current),
+  //       currentlyRenderingFiber: mn.fiberInfo(currentlyRenderingFiber),
+  //       currentHook: currentHook,
+  //       workInProgressHook: workInProgressHook,
+  //     }),
+  //   );
 
-    if (current !== null) {
-      console.log(current.memoizedState === workInProgress.memoizedState)
-    }
-  }
+  //   if (current !== null) {
+  //     console.log(current.memoizedState === workInProgress.memoizedState)
+  //   }
+  // }
 
   renderLanes = nextRenderLanes;
   currentlyRenderingFiber = workInProgress;
@@ -557,13 +557,13 @@ export function renderWithHooks<Props, SecondArg>(
   let children = Component(props, secondArg);
   shouldDoubleInvokeUserFnsInHooksDEV = false;
 
-  console.log(
-    util.inspect({
-      currentlyRenderingFiber: matrixnorm.fiberInfo(currentlyRenderingFiber),
-      currentHook: currentHook,
-      workInProgressHook: workInProgressHook,
-    }),
-  );
+  // console.log(
+  //   util.inspect({
+  //     currentlyRenderingFiber: matrixnorm.fiberInfo(currentlyRenderingFiber),
+  //     currentHook: currentHook,
+  //     workInProgressHook: workInProgressHook,
+  //   }),
+  // );
 
   // Check if there was a render phase update
   if (didScheduleRenderPhaseUpdateDuringThisPass) {
@@ -593,14 +593,14 @@ export function renderWithHooks<Props, SecondArg>(
   }
 
   finishRenderingHooks(current, workInProgress);
-  {
-    let mn = matrixnorm;
-    console.log(
-      ` wip: ${mn.fiberInfo(workInProgress)}\n`,
-      `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
-      `cur: ${mn.fiberInfo(current)}`,
-    );
-  }
+  // {
+  //   let mn = matrixnorm;
+  //   console.log(
+  //     ` wip: ${mn.fiberInfo(workInProgress)}\n`,
+  //     `wip.memoizedState: ${util.inspect(workInProgress.memoizedState)}\n`,
+  //     `cur: ${mn.fiberInfo(current)}`,
+  //   );
+  // }
   return children;
 }
 

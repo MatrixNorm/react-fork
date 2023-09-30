@@ -2265,10 +2265,12 @@ function updateSuspenseComponent(
 
   let showFallback = false;
   const didSuspend = (workInProgress.flags & DidCapture) !== NoFlags;
+  console.log({didSuspend});
   if (
     didSuspend ||
     shouldRemainOnFallback(current, workInProgress, renderLanes)
   ) {
+    console.log("AAAAAAAAAAAAAA")
     // Something in this boundary's subtree already suspended. Switch to
     // rendering the fallback children.
     showFallback = true;
