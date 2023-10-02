@@ -485,6 +485,7 @@ export function includesBlockingLane(root: FiberRoot, lanes: Lanes): boolean {
     InputContinuousLane |
     DefaultHydrationLane |
     DefaultLane;
+  console.log(lanes & SyncDefaultLanes, lanes, DefaultLane, NoLanes);
   return (lanes & SyncDefaultLanes) !== NoLanes;
 }
 

@@ -1,5 +1,7 @@
 'use strict';
 
+import {getStackTrace} from '../index';
+
 describe('useState hook', () => {
   // ???
   let containerForReactComponent = null;
@@ -34,44 +36,25 @@ describe('useState hook', () => {
     });
   }
 
-  it('mount', () => {
+  it('simply_throws_promise', () => {
     function App() {
-      console.log('=== App ===');
-      const [count, setCount] = React.useState(0);
-
       return (
-        <span>{count}</span>
-      );
-    }
-    renderIt(<App />);
-  });
-
-  it('update', () => {
-    function App() {
-      console.log('=== App ===');
-      const [count, setCount] = React.useState(0);
-
-      const incrementCount = () => {
-        console.log('=== incrementCount ===');
-        setCount(prev => prev + 1);
-      };
-
-      return (
-        <div>
-          <button onClick={incrementCount}></button>
-          <div>{count}</div>
-        </div>
+        <React.Suspense fallback={<FallbackPath />}>
+          <MainPath />
+        </React.Suspense>
       );
     }
 
+    function MainPath() {
+      console.log(getStackTrace(5));
+      throw new Promise(() => {});
+    }
+
+    function FallbackPath() {
+      return <p>Moose...</p>;
+    }
+
     renderIt(<App />);
-    console.log('=== /// === UPDATE === /// ===');
-    ReactTestUtils.act(() => {
-      containerForReactComponent
-        .querySelector('button')
-        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    });
+    console.log(document.body.innerHTML);
   });
-
-
 });

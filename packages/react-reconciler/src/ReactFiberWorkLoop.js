@@ -685,7 +685,7 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
 ) {
-  console.log(matrixnorm.getStackTrace(4))
+  console.log(matrixnorm.getStackTrace(4));
   if (__DEV__) {
     if (isRunningInsertionEffect) {
       console.error('useInsertionEffect must not schedule updates.');
@@ -795,14 +795,14 @@ export function scheduleUpdateOnFiber(
     }
 
     ensureRootIsScheduled(root);
-    
+
     console.log(
-      lane === SyncLane,
+      `lane === SyncLane: ${lane === SyncLane}\n`,
       executionContext === NoContext,
-      (fiber.mode & ConcurrentMode) === NoMode
+      (fiber.mode & ConcurrentMode) === NoMode,
     );
-    
-      if (
+
+    if (
       lane === SyncLane &&
       executionContext === NoContext &&
       (fiber.mode & ConcurrentMode) === NoMode
@@ -897,6 +897,11 @@ export function performConcurrentWorkOnRoot(
     !includesBlockingLane(root, lanes) &&
     !includesExpiredLane(root, lanes) &&
     (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+  console.log(
+    includesBlockingLane(root, lanes),
+    includesExpiredLane(root, lanes),
+    disableSchedulerTimeoutInWorkLoop || !didTimeout,
+  );
   let exitStatus = shouldTimeSlice
     ? renderRootConcurrent(root, lanes)
     : renderRootSync(root, lanes);
@@ -1285,7 +1290,7 @@ function markRootSuspended(root: FiberRoot, suspendedLanes: Lanes) {
 // This is the entry point for synchronous tasks that don't go
 // through Scheduler
 export function performSyncWorkOnRoot(root: FiberRoot): null {
-  console.log(matrixnorm.getStackTrace(8))
+  console.log(matrixnorm.getStackTrace(8));
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     syncNestedUpdateFlag();
   }
@@ -1347,13 +1352,13 @@ export function performSyncWorkOnRoot(root: FiberRoot): null {
   const finishedWork: Fiber = (root.current.alternate: any);
   root.finishedWork = finishedWork;
   root.finishedLanes = lanes;
-  
+
   commitRoot(
     root,
     workInProgressRootRecoverableErrors,
     workInProgressTransitions,
   );
-  
+
   // Before exiting, make sure there's a callback scheduled for the next
   // pending level.
   ensureRootIsScheduled(root);
@@ -1986,6 +1991,7 @@ function workLoopSync() {
 }
 
 function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
+  console.log('%%%%%%%%%%%%%%%%%%%%%%%%');
   const prevExecutionContext = executionContext;
   executionContext |= RenderContext;
   const prevDispatcher = pushDispatcher(root.containerInfo);
@@ -2633,7 +2639,7 @@ function commitRootImpl(
     flushPassiveEffects();
   } while (rootWithPendingPassiveEffects !== null);
   flushRenderPhaseStrictModeWarningsInDEV();
-  
+
   if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
     throw new Error('Should not already be working.');
   }
@@ -2688,7 +2694,7 @@ function commitRootImpl(
   root.callbackNode = null;
   root.callbackPriority = NoLane;
   root.cancelPendingCommit = null;
-  
+
   // Check which lanes no longer have any work scheduled on them, and mark
   // those as finished.
   let remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes);
