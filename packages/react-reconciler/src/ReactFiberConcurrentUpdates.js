@@ -95,10 +95,9 @@ function enqueueUpdate(
   lane: Lane,
 ) {
   console.log(
-    `fiber: ${matrixnorm.fiberInfo(fiber)}`,
-    "\nfiber.updateQueue.shared:", queue,
-    "\nupdate:", update,
-    matrixnorm.getStackTrace(6)
+    'concurrentQueues: ',
+    concurrentQueues,
+    matrixnorm.getStackTrace(6),
   );
   // Don't update the `childLanes` on the return path yet. If we already in
   // the middle of rendering, wait until after it has completed.
@@ -117,6 +116,16 @@ function enqueueUpdate(
   if (alternate !== null) {
     alternate.lanes = mergeLanes(alternate.lanes, lane);
   }
+  console.log(
+    'concurrentQueues[0]: ',
+    matrixnorm.fiberInfo(concurrentQueues[0]),
+    '\nconcurrentQueues[1]: ',
+    concurrentQueues[1],
+    '\nconcurrentQueues[2]: ',
+    concurrentQueues[2],
+    '\nconcurrentQueues[3]: ',
+    concurrentQueues[3],
+  );
 }
 
 export function enqueueConcurrentHookUpdate<S, A>(

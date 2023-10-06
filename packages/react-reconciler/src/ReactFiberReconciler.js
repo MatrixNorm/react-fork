@@ -381,6 +381,7 @@ export function updateContainer(
     matrixnorm.getStackTrace(3)
   );
   const root = enqueueUpdate(current, update, lane);
+  //console.log(root === container)
   if (root !== null) {
     scheduleUpdateOnFiber(root, current, lane);
     entangleTransitions(root, current, lane);

@@ -685,7 +685,7 @@ export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
 ) {
-  console.log(matrixnorm.getStackTrace(4));
+  //console.log(matrixnorm.getStackTrace(4));
   if (__DEV__) {
     if (isRunningInsertionEffect) {
       console.error('useInsertionEffect must not schedule updates.');
@@ -796,11 +796,11 @@ export function scheduleUpdateOnFiber(
 
     ensureRootIsScheduled(root);
 
-    console.log(
-      `lane === SyncLane: ${lane === SyncLane}\n`,
-      executionContext === NoContext,
-      (fiber.mode & ConcurrentMode) === NoMode,
-    );
+    // console.log(
+    //   `lane === SyncLane: ${lane === SyncLane}\n`,
+    //   executionContext === NoContext,
+    //   (fiber.mode & ConcurrentMode) === NoMode,
+    // );
 
     if (
       lane === SyncLane &&

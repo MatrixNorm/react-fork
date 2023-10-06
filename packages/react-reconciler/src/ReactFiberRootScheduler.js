@@ -101,7 +101,7 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
       lastScheduledRoot = root;
     }
   }
-  
+
   // Any time a root received an update, we set this to true until the next time
   // we process the schedule. If it's false, then we can quickly exit flushSync
   // without consulting the schedule.
@@ -233,7 +233,7 @@ function throwError(error: mixed) {
 }
 
 function processRootScheduleInMicrotask() {
-  console.log(matrixnorm.getStackTrace(4))
+  console.log(matrixnorm.getStackTrace(20));
   // This function is always called inside a microtask. It should never be
   // called synchronously.
   didScheduleMicrotask = false;
@@ -469,7 +469,10 @@ function scheduleImmediateTask(cb: () => mixed) {
   // TODO: Can we land supportsMicrotasks? Which environments don't support it?
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
-    console.log(matrixnorm.getStackTrace(5));
+    console.log(
+      'add processRootScheduleInMicrotask to microtask queue',
+      matrixnorm.getStackTrace(5),
+    );
     scheduleMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.
       // https://github.com/facebook/react/issues/22459

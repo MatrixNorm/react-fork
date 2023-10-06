@@ -249,6 +249,7 @@ export function enqueueUpdate<State>(
   }
 
   if (isUnsafeClassRenderPhaseUpdate(fiber)) {
+    console.log("=== %%% UnsafeClassRenderPhaseUpdate %%% ===")
     // This is an unsafe render phase update. Add directly to the update
     // queue so we can process it immediately during the current render.
     const pending = sharedQueue.pending;
