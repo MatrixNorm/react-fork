@@ -79,7 +79,9 @@ module.exports = {
       const isInDevToolsPackages = !!filePath.match(
         /\/packages\/react-devtools.*\//
       );
-      const testOnlyPlugins = [pathToBabelPluginAsyncToGenerator];
+      const testOnlyPlugins = [
+        /*XXX pathToBabelPluginAsyncToGenerator*/
+      ];
       const sourceOnlyPlugins = [];
       if (process.env.NODE_ENV === 'development' && !isInDevToolsPackages) {
         sourceOnlyPlugins.push(pathToBabelPluginReplaceConsoleCalls);
@@ -96,6 +98,22 @@ module.exports = {
         plugins.push(pathToTransformReactVersionPragma);
       }
       let sourceAst = hermesParser.parse(src, {babel: true});
+
+      // if (filePath.includes('matrixnorm/__tests__/rootAPI-test.js')) {
+      //   let __xyz = Object.assign(
+      //     {filename: path.relative(process.cwd(), filePath)},
+      //     babelOptions,
+      //     {
+      //       plugins,
+      //       sourceMaps: "inline"
+      //     }
+      //   );
+      //   let srcNew = babel.transformFromAstSync(sourceAst, src, __xyz);
+      //   console.log(filePath);
+      //   console.log(src);
+      //   console.log(srcNew);
+      // }
+      //throw new Error("poo in loo")
       return {
         code: babel.transformFromAstSync(
           sourceAst,
@@ -105,9 +123,10 @@ module.exports = {
             babelOptions,
             {
               plugins,
-              sourceMaps: process.env.JEST_ENABLE_SOURCE_MAPS
-                ? process.env.JEST_ENABLE_SOURCE_MAPS
-                : false,
+              // sourceMaps: process.env.JEST_ENABLE_SOURCE_MAPS
+              //   ? process.env.JEST_ENABLE_SOURCE_MAPS
+              //   : false,
+              sourceMaps: "inline",
             }
           )
         ).code,
