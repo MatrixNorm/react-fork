@@ -342,7 +342,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
-  console.log(matrixnorm.getStackTrace(4))
+  console.log("@@@@@@@@@@@@@@@", matrixnorm.getStackTrace(4));
   var currentTime = getCurrentTime();
 
   var startTime;
@@ -420,7 +420,7 @@ function unstable_scheduleCallback(
       requestHostCallback(flushWork);
     }
   }
-
+  console.log('taskQueue: \n', taskQueue, 'timerQueue: \n', timerQueue);
   return newTask;
 }
 

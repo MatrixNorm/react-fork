@@ -18,7 +18,7 @@ describe('root API', () => {
     ReactDOMClient = require('react-dom/client');
     ReactTestUtils = require('react-dom/test-utils');
     SchedulerMock = require('scheduler/unstable_mock');
-    MatrixNorm  = require('matrixnorm');
+    MatrixNorm = require('matrixnorm');
 
     containerForReactComponent = document.createElement('div');
     document.body.appendChild(containerForReactComponent);
@@ -55,19 +55,22 @@ describe('root API', () => {
   });
 
   it('new_noact', async () => {
-    console.log(MatrixNorm.getStackTrace(10));
     global.IS_REACT_ACT_ENVIRONMENT = false;
+
     const root = ReactDOMClient.createRoot(containerForReactComponent);
     root.render(<App />);
-    console.log('processRootScheduleInMicrotask is in miscrotask queue');
+
+    console.log(
+      'processRootScheduleInMicrotask has been placed into miscrotask queue by now'
+    );
     await new Promise(weAreHappy => {
       queueMicrotask(() => {
-        console.log("hello from microtask queue");
+        console.log('hello from microtask queue');
         weAreHappy();
       });
     });
     console.log(document.body.innerHTML);
-    //SchedulerMock.unstable_flushNumberOfYields(1);
+    SchedulerMock.unstable_flushNumberOfYields(1);
     //console.log(document.body.innerHTML);
   });
 

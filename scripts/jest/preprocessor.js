@@ -123,10 +123,9 @@ module.exports = {
             babelOptions,
             {
               plugins,
-              // sourceMaps: process.env.JEST_ENABLE_SOURCE_MAPS
-              //   ? process.env.JEST_ENABLE_SOURCE_MAPS
-              //   : false,
-              sourceMaps: "inline",
+              sourceMaps: process.env.JEST_ENABLE_SOURCE_MAPS
+                ? "inline"
+                : false,
             }
           )
         ).code,
