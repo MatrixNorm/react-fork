@@ -6,41 +6,21 @@ const root = client.createRoot(containerDomElement);
 root.render(reactElem);
 ```
 
+##
+
 ```javascript
+//////////////////////////////////////////
+// react-dom/src/client/ReactDOMRoot,js //
+//////////////////////////////////////////
+
 export function createRoot(
   container: Element | Document | DocumentFragment,
   options?: CreateRootOptions,
 ): RootType {
-  let isStrictMode = false;
-  let concurrentUpdatesByDefaultOverride = false;
-  let identifierPrefix = '';
-  let onRecoverableError = defaultOnRecoverableError;
-  let transitionCallbacks = null;
-
-  if (options !== null && options !== undefined) {
-    // ... set options
-  }
-
-  const root = createContainer(
-    container,
-    ConcurrentRoot,
-    null,
-    isStrictMode,
-    concurrentUpdatesByDefaultOverride,
-    identifierPrefix,
-    onRecoverableError,
-    transitionCallbacks,
-  );
+  const root = createContainer(container, options);
   markContainerAsRoot(root.current, container);
   Dispatcher.current = ReactDOMClientDispatcher;
-
-  const rootContainerElement: Document | Element | DocumentFragment =
-    container.nodeType === COMMENT_NODE
-      ? (container.parentNode: any)
-      : container;
-  listenToAllSupportedEvents(rootContainerElement);
-
-  // $FlowFixMe[invalid-constructor] Flow no longer supports calling new on functions
+  listenToAllSupportedEvents(container);
   return new ReactDOMRoot(root);
 }
 
@@ -54,41 +34,24 @@ ReactDOMRoot.prototype.render =
     if (root === null) {
       throw new Error('Cannot update an unmounted root.');
     }
+    // react-reconciler/src/ReactFiberReconciler
     updateContainer(children, root, null, null);
   };
 
-// import { updateContainer } from 'react-reconciler/src/ReactFiberReconciler';
-```
-
-```javascript
-// react-reconciler/src/ReactFiberReconciler
+///////////////////////////////////////////////
+// react-reconciler/src/ReactFiberReconciler //
+///////////////////////////////////////////////
 
 export function updateContainer(
   element: ReactNodeList,
   container: OpaqueRoot,
-  parentComponent: ?React$Component<any, any>,
-  callback: ?Function,
+  parentComponent: ?React$Component<any, any>
 ): Lane {
   const current = container.current;
-  const lane = requestUpdateLane(current);
-
-  const context = getContextForSubtree(parentComponent);
-  if (container.context === null) {
-    container.context = context;
-  } else {
-    container.pendingContext = context;
-  }
+  const lane = requestUpdateLane(current); // lane = DefaultLane
 
   const update = createUpdate(lane);
-  // Caution: React DevTools currently depends on this property
-  // being called "element".
   update.payload = {element};
-
-  callback = callback === undefined ? null : callback;
-  if (callback !== null) {
-    update.callback = callback;
-  }
-
   /* update =
     {
       lane: 32,
@@ -107,20 +70,46 @@ export function updateContainer(
       callback: null,
       next: null
     }
-
   */
-  const root = enqueueUpdate(current, update, lane);
+  const root = enqueueUpdate(current /* host root*/, update, lane);
+  // root === container
   if (root !== null) {
     scheduleUpdateOnFiber(root, current, lane);
+    // ???
     entangleTransitions(root, current, lane);
   }
-
   return lane;
 }
 ```
 
+##
+
 ```javascript
-// react-reconciler/src/ReactFiberClassUpdateQueue
+/////////////////////////////////////////////////////
+// react-reconciler/src/ReactFiberClassUpdateQueue //
+/////////////////////////////////////////////////////
+
+type Update<State> = {
+  lane: Lane,
+  tag: 0 | 1 | 2 | 3,
+  payload: any,
+  callback: (() => mixed) | null,
+  next: Update<State> | null,
+};
+
+type UpdateQueue<State> = {
+  baseState: State,
+  firstBaseUpdate: Update<State> | null,
+  lastBaseUpdate: Update<State> | null,
+  shared: SharedQueue<State>,
+  callbacks: Array<() => mixed> | null,
+};
+
+type SharedQueue<State> = {
+  pending: Update<State> | null,
+  lanes: Lanes,
+  hiddenCallbacks: Array<() => mixed> | null,
+};
 
 export function enqueueUpdate<State>(
   fiber: Fiber,
@@ -128,23 +117,23 @@ export function enqueueUpdate<State>(
   lane: Lane,
 ): FiberRoot | null {
   const updateQueue = fiber.updateQueue;
-  if (updateQueue === null) {
-    // Only occurs if the fiber has been unmounted.
-    return null;
-  }
-
-  const sharedQueue: SharedQueue<State> = (updateQueue: any).shared;
-
-  if (isUnsafeClassRenderPhaseUpdate(fiber)) {
-    // ... this branch is not visited
-  } else {
-    return enqueueConcurrentClassUpdate(fiber, sharedQueue, update, lane);
-  }
+  const sharedQueue: SharedQueue<State> = updateQueue.shared;
+  // === ReactFiberConcurrentUpdates
+  return enqueueConcurrentClassUpdate(fiber, sharedQueue, update, lane);
 }
-```
 
-```javascript
-// react-reconciler/src/ReactFiberConcurrentUpdates
+//////////////////////////////////////////////////////
+// react-reconciler/src/ReactFiberConcurrentUpdates //
+//////////////////////////////////////////////////////
+
+type ConcurrentUpdate = {
+  next: ConcurrentUpdate,
+  lane: Lane,
+};
+
+type ConcurrentQueue = {
+  pending: ConcurrentUpdate | null,
+};
 
 const concurrentQueues: Array<any> = [];
 let concurrentQueuesIndex = 0;
@@ -152,8 +141,8 @@ let concurrentlyUpdatedLanes: Lanes = NoLanes;
 
 export function enqueueConcurrentClassUpdate<State>(
   fiber: Fiber,
-  queue: ClassQueue<State>,
-  update: ClassUpdate<State>,
+  queue: SharedQueue<State>,
+  update: Update<State>,
   lane: Lane,
 ): FiberRoot | null {
   const concurrentQueue: ConcurrentQueue = (queue: any);
@@ -172,9 +161,8 @@ function enqueueUpdate(
   concurrentQueues[concurrentQueuesIndex++] = queue;
   concurrentQueues[concurrentQueuesIndex++] = update;
   concurrentQueues[concurrentQueuesIndex++] = lane;
-
+  // ???
   concurrentlyUpdatedLanes = mergeLanes(concurrentlyUpdatedLanes, lane);
-
   fiber.lanes = mergeLanes(fiber.lanes, lane);
   const alternate = fiber.alternate;
   if (alternate !== null) {
@@ -183,96 +171,175 @@ function enqueueUpdate(
 }
 ```
 
-```javascript
-// ReactFiberWorkLoop
+##
 
+```javascript
+////////////////////////
+// ReactFiberWorkLoop //
+////////////////////////
+
+// workInProgressRoot === null
 export function scheduleUpdateOnFiber(
   root: FiberRoot,
   fiber: Fiber,
   lane: Lane,
 ) {
-  // Check if the work loop is currently suspended and waiting for data to
-  // finish loading.
-  if (
-    // Suspended render phase
-    (root === workInProgressRoot &&
-      workInProgressSuspendedReason === SuspendedOnData) ||
-    // Suspended commit phase
-    root.cancelPendingCommit !== null
-  ) {
-    // The incoming update might unblock the current render. Interrupt the
-    // current attempt and restart from the top.
-    prepareFreshStack(root, NoLanes);
-    markRootSuspended(root, workInProgressRootRenderLanes);
-  }
-
-  // Mark that the root has a pending update.
   markRootUpdated(root, lane);
+  ensureRootIsScheduled(root);    
+}
 
-  if (
-    (executionContext & RenderContext) !== NoLanes &&
-    root === workInProgressRoot
-  ) {
-    // This update was dispatched during the render phase. This is a mistake
-    // if the update originates from user space (with the exception of local
-    // hook updates, which are handled differently and don't reach this
-    // function), but there are some internal React features that use this as
-    // an implementation detail, like selective hydration.
-    warnAboutRenderPhaseUpdatesInDEV(fiber);
+// === ReactFiberRootScheduler.js === // 
+// mightHavePendingSyncWork = false
+// didScheduleMicrotask = false
+// firstScheduledRoot = null
+export function ensureRootIsScheduled(root: FiberRoot): void {
+  mightHavePendingSyncWork = true;
+  firstScheduledRoot = root
+  if (!didScheduleMicrotask) {
+    didScheduleMicrotask = true;
+    queueMicrotask(processRootScheduleInMicrotask);
+  }
+}
 
-    // Track lanes that were updated during the render phase
-    workInProgressRootRenderPhaseUpdatedLanes = mergeLanes(
-      workInProgressRootRenderPhaseUpdatedLanes,
-      lane,
-    );
-  } else {
-    // This is a normal update, scheduled from outside the render phase. For
-    // example, during an input event.
-    if (enableUpdaterTracking) {
-      if (isDevToolsPresent) {
-        addFiberToLanesMap(root, fiber, lane);
-      }
+function processRootScheduleInMicrotask() {
+  didScheduleMicrotask = false;
+  mightHavePendingSyncWork = false;
+  const currentTime = now();
+  let root = firstScheduledRoot;
+  const nextLanes = scheduleTaskForRootDuringMicrotask(root, currentTime);
+}
+
+function scheduleTaskForRootDuringMicrotask(
+  root: FiberRoot,
+  currentTime: number,
+): Lane {
+  markStarvedLanesAsExpired(root, currentTime);
+  const nextLanes = getNextLanes(root, NoLanes);
+  const newCallbackPriority = getHighestPriorityLane(nextLanes);
+  // !!!
+  const newCallbackNode = scheduleCallback(
+    NormalSchedulerPriority,
+    performConcurrentWorkOnRoot.bind(null, root),
+  );
+  root.callbackPriority = newCallbackPriority;
+  root.callbackNode = newCallbackNode;
+  return newCallbackPriority;
+}
+
+function scheduleCallback(
+  priorityLevel: PriorityLevel,
+  callback: RenderTaskFn,
+) {
+  // SchedulerMock.unstable_scheduleCallback
+  return Scheduler_scheduleCallback(priorityLevel, callback);
+}
+```
+
+```javascript
+export function performConcurrentWorkOnRoot(
+  root: FiberRoot,
+  didTimeout: boolean,
+): RenderTaskFn | null {
+  const shouldTimeSlice =
+    !includesBlockingLane(root, lanes) &&
+    !includesExpiredLane(root, lanes);
+
+  let exitStatus = shouldTimeSlice
+    ? renderRootConcurrent(root, lanes)
+    : renderRootSync(root, lanes);
+  
+  // more stuff ... 
+
+  ensureRootIsScheduled(root);
+  return getContinuationForRoot(root, originalCallbackNode);
+}
+
+// workInProgressRoot = null
+//  workInProgressRootRenderLanes = NoLanes
+function renderRootSync(root: FiberRoot, lanes: Lanes) {
+  const prevExecutionContext = executionContext;
+  executionContext |= RenderContext;
+  const prevDispatcher = pushDispatcher(root.containerInfo);
+  const prevCacheDispatcher = pushCacheDispatcher();
+
+  workInProgressTransitions = getTransitionsForLanes(root, lanes); // ???
+  prepareFreshStack(root, lanes);
+
+  outer: do {
+    try {
+      workLoopSync();
+      break;
+    } catch (thrownValue) {
+      handleThrow(root, thrownValue);
     }
+  } while (true);
 
-    warnIfUpdatesNotWrappedWithActDEV(fiber);
+  resetContextDependencies();
+  executionContext = prevExecutionContext;
+  popDispatcher(prevDispatcher);
+  popCacheDispatcher(prevCacheDispatcher);
 
-    if (root === workInProgressRoot) {
-      // Received an update to a tree that's in the middle of rendering. Mark
-      // that there was an interleaved update work on this root.
-      if ((executionContext & RenderContext) === NoContext) {
-        workInProgressRootInterleavedUpdatedLanes = mergeLanes(
-          workInProgressRootInterleavedUpdatedLanes,
-          lane,
-        );
-      }
-      if (workInProgressRootExitStatus === RootSuspendedWithDelay) {
-        // The root already suspended with a delay, which means this render
-        // definitely won't finish. Since we have a new update, let's mark it as
-        // suspended now, right before marking the incoming update. This has the
-        // effect of interrupting the current render and switching to the update.
-        // TODO: Make sure this doesn't override pings that happen while we've
-        // already started rendering.
-        markRootSuspended(root, workInProgressRootRenderLanes);
-      }
-    }
+  workInProgressRoot = null;
+  workInProgressRootRenderLanes = NoLanes;
+  finishQueueingConcurrentUpdates();
+  return workInProgressRootExitStatus;
+}
 
-    ensureRootIsScheduled(root);
-    if (
-      lane === SyncLane &&
-      executionContext === NoContext &&
-      (fiber.mode & ConcurrentMode) === NoMode
-    ) {
-      if (__DEV__ && ReactCurrentActQueue.isBatchingLegacy) {
-        // Treat `act` as if it's inside `batchedUpdates`, even in legacy mode.
+function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
+  root.finishedWork = null;
+  root.finishedLanes = NoLanes;
+  workInProgressRoot = root;
+  const rootWorkInProgress = createWorkInProgress(root.current, null);
+  workInProgress = rootWorkInProgress;
+  workInProgressRootRenderLanes = renderLanes = lanes;
+  workInProgressSuspendedReason = NotSuspended;
+  workInProgressThrownValue = null;
+  workInProgressRootDidAttachPingListener = false;
+  workInProgressRootExitStatus = RootInProgress;
+  workInProgressRootFatalError = null;
+  workInProgressRootSkippedLanes = NoLanes;
+  workInProgressRootInterleavedUpdatedLanes = NoLanes;
+  workInProgressRootRenderPhaseUpdatedLanes = NoLanes;
+  workInProgressRootPingedLanes = NoLanes;
+  workInProgressRootConcurrentErrors = null;
+  workInProgressRootRecoverableErrors = null;
+
+  finishQueueingConcurrentUpdates();
+
+  return rootWorkInProgress;
+}
+
+export function finishQueueingConcurrentUpdates(): void {
+  const endIndex = concurrentQueuesIndex;
+  concurrentQueuesIndex = 0;
+
+  concurrentlyUpdatedLanes = NoLanes;
+
+  let i = 0;
+  while (i < endIndex) {
+    const fiber: Fiber = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const queue: ConcurrentQueue = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const update: ConcurrentUpdate = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const lane: Lane = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+
+    if (queue !== null && update !== null) {
+      const pending = queue.pending;
+      if (pending === null) {
+        // This is the first update. Create a circular list.
+        update.next = update;
       } else {
-        // Flush the synchronous work now, unless we're already working or inside
-        // a batch. This is intentionally inside scheduleUpdateOnFiber instead of
-        // scheduleCallbackForFiber to preserve the ability to schedule a callback
-        // without immediately flushing it. We only do this for user-initiated
-        // updates, to preserve historical behavior of legacy mode.
-        resetRenderTimer();
-        flushSyncWorkOnLegacyRootsOnly();
+        update.next = pending.next;
+        pending.next = update;
       }
+      queue.pending = update;
+    }
+
+    if (lane !== NoLane) {
+      markUpdateLaneFromFiberToRoot(fiber, update, lane);
     }
   }
 }

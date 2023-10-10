@@ -8,6 +8,7 @@ describe('root API', () => {
   let ReactDOMClient;
   let ReactTestUtils;
   let SchedulerMock;
+  let MatrixNorm;
 
   beforeEach(() => {
     jest.resetModules(); // ???
@@ -17,6 +18,7 @@ describe('root API', () => {
     ReactDOMClient = require('react-dom/client');
     ReactTestUtils = require('react-dom/test-utils');
     SchedulerMock = require('scheduler/unstable_mock');
+    MatrixNorm = require('matrixnorm');
 
     containerForReactComponent = document.createElement('div');
     document.body.appendChild(containerForReactComponent);
@@ -33,15 +35,13 @@ describe('root API', () => {
     console.log('=== App ===');
     const [count, setCount] = React.useState(0);
 
-    return (
-      <span>{count}</span>
-    );
+    return <span>{count}</span>;
   }
 
   it('new_act', () => {
     ReactTestUtils.act(() => {
       const root = ReactDOMClient.createRoot(containerForReactComponent);
-      root.render(<App/>);
+      root.render(<App />);
     });
     /**
      * ReactFiberAct.js###isConcurrentActEnvironment:
@@ -58,22 +58,30 @@ describe('root API', () => {
     global.IS_REACT_ACT_ENVIRONMENT = false;
 
     const root = ReactDOMClient.createRoot(containerForReactComponent);
-    root.render(<App/>);
-    // wait for processRootScheduleInMicrotask to be called
-    console.log("BEFORE: await new Promise(queueMicrotask)")
-    await new Promise(queueMicrotask);
-    //SchedulerMock.unstable_flushNumberOfYields(1)
-    console.log(document.body.innerHTML)
+    root.render(<App />);
+
+    console.log(
+      'processRootScheduleInMicrotask has been placed into miscrotask queue by now'
+    );
+    await new Promise(weAreHappy => {
+      queueMicrotask(() => {
+        console.log('hello from microtask queue');
+        weAreHappy();
+      });
+    });
+    console.log(document.body.innerHTML);
+    SchedulerMock.unstable_flushNumberOfYields(1);
+    //console.log(document.body.innerHTML);
   });
 
   it('old_act', () => {
     ReactTestUtils.act(() => {
-      ReactDOM.render(<App/>, containerForReactComponent);
+      ReactDOM.render(<App />, containerForReactComponent);
     });
   });
 
   it('old_noact', () => {
-    ReactDOM.render(<App/>, containerForReactComponent);
-    console.log(document.body.innerHTML)
+    ReactDOM.render(<App />, containerForReactComponent);
+    console.log(document.body.innerHTML);
   });
 });
