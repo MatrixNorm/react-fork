@@ -1456,7 +1456,15 @@ function updateHostRoot(
   const nextProps = workInProgress.pendingProps;
   const prevState = workInProgress.memoizedState;
   const prevChildren = prevState.element;
+  console.log(
+    'current.updateQueue === workInProgress.updateQueue',
+    current.updateQueue === workInProgress.updateQueue,
+  );
   cloneUpdateQueue(current, workInProgress);
+  console.log(
+    'current.updateQueue === workInProgress.updateQueue',
+    current.updateQueue === workInProgress.updateQueue,
+  );
   processUpdateQueue(workInProgress, nextProps, null, renderLanes);
 
   const nextState: RootState = workInProgress.memoizedState;
