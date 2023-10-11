@@ -563,6 +563,7 @@ function forceFrameRate(fps: number) {
 }
 
 const performWorkUntilDeadline = () => {
+  console.log("======================================")
   if (scheduledHostCallback !== null) {
     const currentTime = getCurrentTime();
     // Keep track of the start time so we can measure how long the main thread
@@ -634,6 +635,7 @@ if (typeof localSetImmediate === 'function') {
 function requestHostCallback(
   callback: (hasTimeRemaining: boolean, initialTime: number) => boolean,
 ) {
+  console.log("%%%%%%%%%%%%%%%%%%%%")
   scheduledHostCallback = callback;
   if (!isMessageLoopRunning) {
     isMessageLoopRunning = true;

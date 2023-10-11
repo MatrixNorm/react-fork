@@ -52,6 +52,8 @@ type Task = {
   isQueued?: boolean,
 };
 
+console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
 // Max 31 bit integer. The max integer size in V8 for 32-bit systems.
 // Math.pow(2, 30) - 1
 // 0b111111111111111111111111111111
@@ -460,6 +462,7 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 }
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
+  console.log("&&&&&&&&&&&&&&&&&&&7")
   scheduledCallback = callback;
 }
 
