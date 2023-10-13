@@ -850,6 +850,7 @@ export function performConcurrentWorkOnRoot(
   root: FiberRoot,
   didTimeout: boolean,
 ): RenderTaskFn | null {
+  console.log(matrixnorm.getStackTrace(7));
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     resetNestedUpdateFlag();
   }
@@ -897,11 +898,7 @@ export function performConcurrentWorkOnRoot(
     !includesBlockingLane(root, lanes) &&
     !includesExpiredLane(root, lanes) &&
     (disableSchedulerTimeoutInWorkLoop || !didTimeout);
-  console.log(
-    includesBlockingLane(root, lanes),
-    includesExpiredLane(root, lanes),
-    disableSchedulerTimeoutInWorkLoop || !didTimeout,
-  );
+
   let exitStatus = shouldTimeSlice
     ? renderRootConcurrent(root, lanes)
     : renderRootSync(root, lanes);

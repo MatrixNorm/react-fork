@@ -233,7 +233,6 @@ function throwError(error: mixed) {
 }
 
 function processRootScheduleInMicrotask() {
-  console.log(matrixnorm.getStackTrace(20));
   // This function is always called inside a microtask. It should never be
   // called synchronously.
   didScheduleMicrotask = false;
@@ -333,6 +332,7 @@ function scheduleTaskForRootDuringMicrotask(
     // Suspended commit phase
     root.cancelPendingCommit !== null
   ) {
+    console.log("There's nothing to work on")
     // Fast path: There's nothing to work on.
     if (existingCallbackNode !== null) {
       cancelCallback(existingCallbackNode);
@@ -471,7 +471,7 @@ function scheduleImmediateTask(cb: () => mixed) {
   if (supportsMicrotasks) {
     console.log(
       'add processRootScheduleInMicrotask to microtask queue',
-      matrixnorm.getStackTrace(5),
+      matrixnorm.getStackTrace(20),
     );
     scheduleMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.

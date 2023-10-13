@@ -11,6 +11,8 @@
 
 import type {PriorityLevel} from '../SchedulerPriorities';
 
+import * as matrixnorm from 'matrixnorm';
+
 import {
   enableSchedulerDebugging,
   enableProfiling,
@@ -207,6 +209,7 @@ function flushWork(hasTimeRemaining: boolean, initialTime: number) {
 }
 
 function workLoop(hasTimeRemaining: boolean, initialTime: number) {
+  console.log(matrixnorm.getStackTrace(5));
   let currentTime = initialTime;
   advanceTimers(currentTime);
   currentTask = peek(taskQueue);
@@ -348,7 +351,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
-  console.log("@@@@@@@@@@@@@@@@@@@")
+  console.log(matrixnorm.getStackTrace(9));
   var currentTime = getCurrentTime();
 
   var startTime;
@@ -563,7 +566,7 @@ function forceFrameRate(fps: number) {
 }
 
 const performWorkUntilDeadline = () => {
-  console.log("======================================")
+  console.log("=============", scheduledHostCallback);
   if (scheduledHostCallback !== null) {
     const currentTime = getCurrentTime();
     // Keep track of the start time so we can measure how long the main thread
@@ -628,6 +631,7 @@ if (typeof localSetImmediate === 'function') {
   // We should only fallback here in non-browser environments.
   schedulePerformWorkUntilDeadline = () => {
     // $FlowFixMe[not-a-function] nullable value
+    console.log(matrixnorm.getStackTrace(4));
     localSetTimeout(performWorkUntilDeadline, 0);
   };
 }
@@ -635,7 +639,6 @@ if (typeof localSetImmediate === 'function') {
 function requestHostCallback(
   callback: (hasTimeRemaining: boolean, initialTime: number) => boolean,
 ) {
-  console.log("%%%%%%%%%%%%%%%%%%%%")
   scheduledHostCallback = callback;
   if (!isMessageLoopRunning) {
     isMessageLoopRunning = true;
