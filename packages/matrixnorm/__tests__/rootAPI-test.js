@@ -7,7 +7,7 @@ describe('root API', () => {
   let ReactDOM;
   let ReactDOMClient;
   let ReactTestUtils;
-  let SchedulerMock;
+  let Scheduler;
   let MatrixNorm;
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('root API', () => {
     ReactDOM = require('react-dom');
     ReactDOMClient = require('react-dom/client');
     ReactTestUtils = require('react-dom/test-utils');
-    SchedulerMock = require('scheduler/unstable_mock');
+    Scheduler = require('scheduler');
     MatrixNorm = require('matrixnorm');
 
     containerForReactComponent = document.createElement('div');
@@ -34,7 +34,6 @@ describe('root API', () => {
   function App() {
     console.log('=== App ===');
     const [count, setCount] = React.useState(0);
-
     return <span>{count}</span>;
   }
 
@@ -70,8 +69,36 @@ describe('root API', () => {
       });
     });
     console.log(document.body.innerHTML);
-    SchedulerMock.unstable_flushNumberOfYields(1);
-    //console.log(document.body.innerHTML);
+    Scheduler.unstable_flushNumberOfYields(1);
+    console.log(document.body.innerHTML);
+    console.log("end of test");
+  });
+
+  it('new_noact_real_scheduler', async () => {
+    jest.unmock('scheduler');
+    jest.resetModules();
+    React = require('react');
+    ReactDOMClient = require('react-dom/client');
+
+    global.IS_REACT_ACT_ENVIRONMENT = false;
+
+    const root = ReactDOMClient.createRoot(containerForReactComponent);
+    root.render(<App />);
+
+    console.log(
+      'processRootScheduleInMicrotask has been placed into miscrotask queue by now'
+    );
+    await new Promise(weAreHappy => {
+      queueMicrotask(() => {
+        console.log('hello from microtask queue');
+        weAreHappy();
+      });
+    });
+    console.log(document.body.innerHTML);
+    console.log("run pending timers");
+    jest.runOnlyPendingTimers();
+    console.log(document.body.innerHTML);
+    console.log("end of test");
   });
 
   it('old_act', () => {

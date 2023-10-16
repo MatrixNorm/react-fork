@@ -2270,7 +2270,6 @@ function updateSuspenseComponent(
     didSuspend ||
     shouldRemainOnFallback(current, workInProgress, renderLanes)
   ) {
-    console.log("AAAAAAAAAAAAAA")
     // Something in this boundary's subtree already suspended. Switch to
     // rendering the fallback children.
     showFallback = true;
@@ -2344,6 +2343,7 @@ function updateSuspenseComponent(
         nextFallbackChildren,
         renderLanes,
       );
+      console.log(matrixnorm.fiberInfo(fallbackFragment));
       const primaryChildFragment: Fiber = (workInProgress.child: any);
       primaryChildFragment.memoizedState =
         mountSuspenseOffscreenState(renderLanes);

@@ -1156,6 +1156,18 @@ function finishConcurrentRender(
         return;
       }
     }
+
+    {
+      let tree2XML = matrixnorm.fiberTreeToXML;
+      console.log(
+        'BEFORE COMMIT\n',
+        'current tree:\n',
+        tree2XML({hostRoot: root.current}),
+        '\nWIP tree:\n',
+        tree2XML({hostRoot: root.current.alternate}),
+      );
+    }
+
     commitRootWhenReady(
       root,
       finishedWork,
@@ -1163,6 +1175,17 @@ function finishConcurrentRender(
       workInProgressTransitions,
       lanes,
     );
+
+    {
+      let tree2XML = matrixnorm.fiberTreeToXML;
+      console.log(
+        'AFTER COMMIT\n',
+        'current tree:\n',
+        tree2XML({hostRoot: root.current}),
+        '\nWIP tree:\n',
+        tree2XML({hostRoot: root.current.alternate}),
+      );
+    }
   }
 }
 
@@ -1573,6 +1596,7 @@ function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
 }
 
 function resetSuspendedWorkLoopOnUnwind(fiber: Fiber) {
+  console.log(matrixnorm.fiberInfo(fiber), matrixnorm.getStackTrace(5));
   // Reset module-level state that was set during the render phase.
   resetContextDependencies();
   resetHooksOnUnwind(fiber);
@@ -1654,6 +1678,7 @@ function handleThrow(root: FiberRoot, thrownValue: any): void {
   workInProgressThrownValue = thrownValue;
 
   const erroredWork = workInProgress;
+
   if (erroredWork === null) {
     // This is a fatal error
     workInProgressRootExitStatus = RootFatalErrored;
@@ -1904,6 +1929,10 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
         workInProgressSuspendedReason !== NotSuspended &&
         workInProgress !== null
       ) {
+        console.log(
+          'The work loop is suspended',
+          `\nworkInProgress: ${matrixnorm.fiberInfo(workInProgress)}`,
+        );
         // The work loop is suspended. During a synchronous render, we don't
         // yield to the main thread. Immediately unwind the stack. This will
         // trigger either a fallback or an error boundary.
@@ -1928,6 +1957,9 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
             workInProgressSuspendedReason = NotSuspended;
             workInProgressThrownValue = null;
             throwAndUnwindWorkLoop(unitOfWork, thrownValue);
+            console.log(
+              `\nworkInProgress: ${matrixnorm.fiberInfo(workInProgress)}`,
+            );
             break;
           }
         }
@@ -2259,7 +2291,13 @@ function performUnitOfWork(unitOfWork: Fiber): void {
       `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
       `\ncur: ${matrixnorm.fiberInfo(current)}`,
       '\n\nwip fiber tree:\n',
-      wipHostRoot ? `${tree2XML(wipHostRoot, curHostRoot, unitOfWork)}` : '<>',
+      wipHostRoot
+        ? `${tree2XML({
+            hostRoot: wipHostRoot,
+            altHostRoot: curHostRoot,
+            workInProgress: unitOfWork,
+          })}`
+        : '<>',
     );
   }
 
@@ -2640,6 +2678,7 @@ function commitRootImpl(
   transitions: Array<Transition> | null,
   renderPriorityLevel: EventPriority,
 ) {
+  console.log(matrixnorm.getStackTrace(7));
   do {
     // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
     // means `flushPassiveEffects` will sometimes result in additional
@@ -3774,6 +3813,7 @@ if (__DEV__ && replayFailedUnitOfWorkWithInvokeGuardedCallback) {
       ) {
         // Don't replay promises.
         // Don't replay errors if we are hydrating and have already suspended or handled an error
+        console.log('throw originalError', matrixnorm.getStackTrace(7));
         throw originalError;
       }
 

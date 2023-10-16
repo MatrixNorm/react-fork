@@ -753,7 +753,6 @@ export function createFiberFromOffscreen(
   lanes: Lanes,
   key: null | string,
 ): Fiber {
-  console.log(matrixnorm.getStackTrace(5));
   const fiber = createFiber(OffscreenComponent, pendingProps, key, mode);
   fiber.elementType = REACT_OFFSCREEN_TYPE;
   fiber.lanes = lanes;
