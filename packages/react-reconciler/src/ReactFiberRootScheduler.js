@@ -11,6 +11,7 @@ import type {FiberRoot} from './ReactInternalTypes';
 import type {Lane} from './ReactFiberLane';
 import type {PriorityLevel} from 'scheduler/src/SchedulerPriorities';
 
+import * as matrixnorm from 'matrixnorm';
 import {enableDeferRootSchedulingToMicrotask} from 'shared/ReactFeatureFlags';
 import {
   NoLane,
@@ -82,6 +83,7 @@ let isFlushingWork: boolean = false;
 let currentEventTransitionLane: Lane = NoLane;
 
 export function ensureRootIsScheduled(root: FiberRoot): void {
+  console.log(matrixnorm.getStackTrace(5));
   // This function is called whenever a root receives an update. It does two
   // things 1) it ensures the root is in the root schedule, and 2) it ensures
   // there's a pending microtask to process the root schedule.

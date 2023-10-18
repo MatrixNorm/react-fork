@@ -1126,6 +1126,8 @@ function finishConcurrentRender(
       const msUntilTimeout =
         globalMostRecentFallbackTime + FALLBACK_THROTTLE_MS - now();
 
+      console.log(globalMostRecentFallbackTime, FALLBACK_THROTTLE_MS, now());
+
       // Don't bother with a very short suspense time.
       if (msUntilTimeout > 10) {
         markRootSuspended(root, lanes);
@@ -3377,6 +3379,7 @@ export function attachPingListener(
   wakeable: Wakeable,
   lanes: Lanes,
 ) {
+  console.log(matrixnorm.getStackTrace(7));
   // Attach a ping listener
   //
   // The data might resolve before we have a chance to commit the fallback. Or,
@@ -3423,6 +3426,7 @@ function pingSuspendedRoot(
   wakeable: Wakeable,
   pingedLanes: Lanes,
 ) {
+  console.log(matrixnorm.getStackTrace(7));
   const pingCache = root.pingCache;
   if (pingCache !== null) {
     // The wakeable resolved, so we no longer need to memoize, because it will
@@ -3503,6 +3507,7 @@ export function retryDehydratedSuspenseBoundary(boundaryFiber: Fiber) {
 }
 
 export function resolveRetryWakeable(boundaryFiber: Fiber, wakeable: Wakeable) {
+  console.log(matrixnorm.getStackTrace(7));
   let retryLane = NoLane; // Default
   let retryCache: WeakSet<Wakeable> | Set<Wakeable> | null;
   switch (boundaryFiber.tag) {

@@ -208,7 +208,7 @@ function FiberNode(
     this._debugNeedsRemount = false;
     this._debugHookTypes = null;
     if (!hasBadMapPolyfill && typeof Object.preventExtensions === 'function') {
-      Object.preventExtensions(this);
+      //Object.preventExtensions(this);
     }
   }
 }

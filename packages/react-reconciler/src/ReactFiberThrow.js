@@ -15,6 +15,7 @@ import type {Wakeable} from 'shared/ReactTypes';
 import type {OffscreenQueue} from './ReactFiberOffscreenComponent';
 import type {RetryQueue} from './ReactFiberSuspenseComponent';
 
+import * as matnom from 'matrixnorm';
 import getComponentNameFromFiber from 'react-reconciler/src/getComponentNameFromFiber';
 import {
   ClassComponent,
@@ -427,6 +428,37 @@ function throwException(
           if (isSuspenseyResource) {
             suspenseBoundary.flags |= ScheduleRetry;
           } else {
+            {
+              const fibInfo = matnom.fiberInfo(suspenseBoundary);
+              console.log(
+                'suspenseBoundary.updateQueue: ',
+                suspenseBoundary.updateQueue,
+                '\n',
+                fibInfo,
+                matnom.getStackTrace(7),
+              );
+
+              suspenseBoundary.__updateQueue = suspenseBoundary.updateQueue;
+
+              Object.defineProperty(suspenseBoundary, 'updateQueue', {
+                get() {
+                  console.log(
+                    `GET updateQueue of ${fibInfo}`,
+                    matnom.getStackTrace(7),
+                  );
+                  return suspenseBoundary.__updateQueue;
+                },
+
+                set(value) {
+                  console.log(
+                    `SET updateQueue of ${fibInfo} to ${value}`,
+                    matnom.getStackTrace(7),
+                  );
+                  suspenseBoundary.__updateQueue = value;
+                },
+              });
+            }
+
             const retryQueue: RetryQueue | null =
               (suspenseBoundary.updateQueue: any);
             if (retryQueue === null) {

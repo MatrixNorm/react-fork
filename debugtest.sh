@@ -1,4 +1,4 @@
-JEST_ENABLE_SOURCE_MAPS=inline \
+JEST_ENABLE_SOURCE_MAPS=true \
 NODE_ENV=development \
 RELEASE_CHANNEL=experimental \
 compactConsole=false \

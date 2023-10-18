@@ -2445,6 +2445,7 @@ function attachSuspenseRetryListeners(
   finishedWork: Fiber,
   wakeables: RetryQueue,
 ) {
+  console.log(matrixnorm.getStackTrace(7));
   // If this boundary just timed out, then it will have a set of wakeables.
   // For each wakeable, attach a listener so that when it resolves, React
   // attempts to re-render the boundary in the primary (pre-timeout) state.

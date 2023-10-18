@@ -12,6 +12,7 @@
 
 import type {PriorityLevel} from '../SchedulerPriorities';
 
+import * as matnom from 'matrixnorm';
 import {
   enableSchedulerDebugging,
   enableProfiling,
@@ -341,6 +342,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
+  console.log(callback, matnom.getStackTrace(8));
   var currentTime = getCurrentTime();
 
   var startTime;
