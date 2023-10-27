@@ -327,6 +327,7 @@ export function updateContainer(
     onScheduleRoot(container, element);
   }
   const current = container.current;
+  console.log(matrixnorm.fiberInfo(current));
   const lane = requestUpdateLane(current);
 
   if (enableSchedulingProfiler) {

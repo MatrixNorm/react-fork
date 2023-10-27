@@ -936,7 +936,7 @@ function mountWorkInProgressHook(): Hook {
 }
 
 function updateWorkInProgressHook(): Hook {
-  console.log(matrixnorm.getStackTrace(6));
+  console.log(matrixnorm.getStackTrace(19));
   // This function is used both for updates and for re-renders triggered by a
   // render phase update. It assumes there is either a current hook we can
   // clone, or a work-in-progress hook from a previous render pass that we can
@@ -2012,7 +2012,7 @@ function mountStateImpl<S>(initialState: (() => S) | S): Hook {
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
-  console.log(`initialState: ${initialState}`, matrixnorm.getStackTrace(6));
+  console.log(`initialState: ${initialState}`, matrixnorm.getStackTrace(16));
   const hook = mountStateImpl(initialState);
   const queue = hook.queue;
   const dispatch: Dispatch<BasicStateAction<S>> = (dispatchSetState.bind(
@@ -3045,7 +3045,7 @@ function dispatchSetState<S, A>(
   };
 
   console.log(
-    ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
+    `fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
     `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
     update,
     matrixnorm.getStackTrace(2),

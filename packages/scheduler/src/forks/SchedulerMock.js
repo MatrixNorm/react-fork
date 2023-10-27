@@ -460,6 +460,7 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 }
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
+  console.log("&&&&&&&&&& requestHostCallback &&&&&&&&&")
   scheduledCallback = callback;
 }
 

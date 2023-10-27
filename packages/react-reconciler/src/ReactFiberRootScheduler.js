@@ -83,7 +83,7 @@ let isFlushingWork: boolean = false;
 let currentEventTransitionLane: Lane = NoLane;
 
 export function ensureRootIsScheduled(root: FiberRoot): void {
-  console.log(matrixnorm.getStackTrace(5));
+  console.log(matrixnorm.getStackTrace(8));
   // This function is called whenever a root receives an update. It does two
   // things 1) it ensures the root is in the root schedule, and 2) it ensures
   // there's a pending microtask to process the root schedule.
@@ -119,6 +119,7 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
   } else {
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
+      console.log('put processRootScheduleInMicrotask to microtask queue');
       scheduleImmediateTask(processRootScheduleInMicrotask);
     }
   }
@@ -233,6 +234,7 @@ function throwError(error: mixed) {
 }
 
 function processRootScheduleInMicrotask() {
+  console.log(matrixnorm.getStackTrace(5));
   // This function is always called inside a microtask. It should never be
   // called synchronously.
   didScheduleMicrotask = false;

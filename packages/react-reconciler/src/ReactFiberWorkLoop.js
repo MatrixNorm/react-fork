@@ -2288,19 +2288,19 @@ function performUnitOfWork(unitOfWork: Fiber): void {
     let curHostRoot = workInProgressRoot.current;
     let wipHostRoot = curHostRoot.alternate;
 
-    console.log(
-      'beginWork>>>',
-      `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
-      `\ncur: ${matrixnorm.fiberInfo(current)}`,
-      '\n\nwip fiber tree:\n',
-      wipHostRoot
-        ? `${tree2XML({
-            hostRoot: wipHostRoot,
-            altHostRoot: curHostRoot,
-            workInProgress: unitOfWork,
-          })}`
-        : '<>',
-    );
+    // console.log(
+    //   'beginWork>>>',
+    //   `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+    //   `\ncur: ${matrixnorm.fiberInfo(current)}`,
+    //   '\n\nwip fiber tree:\n',
+    //   wipHostRoot
+    //     ? `${tree2XML({
+    //         hostRoot: wipHostRoot,
+    //         altHostRoot: curHostRoot,
+    //         workInProgress: unitOfWork,
+    //       })}`
+    //     : '<>',
+    // );
   }
 
   let next;
@@ -2311,10 +2311,10 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log(
-    '<<<beginWork',
-    `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
-  );
+  // console.log(
+  //   '<<<beginWork',
+  //   `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
+  // );
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2530,7 +2530,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     const returnFiber = completedWork.return;
 
     setCurrentDebugFiberInDEV(completedWork);
-    console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
+    //console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
     let next;
     if (!enableProfilerTimer || (completedWork.mode & ProfileMode) === NoMode) {
       next = completeWork(current, completedWork, renderLanes);
@@ -2557,10 +2557,10 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       workInProgress = siblingFiber;
       return;
     }
-    console.log(
-      `${matrixnorm.fiberInfo(completedWork)} has no siblings\n`,
-      `return to ${matrixnorm.fiberInfo(returnFiber)}`,
-    );
+    // console.log(
+    //   `${matrixnorm.fiberInfo(completedWork)} has no siblings\n`,
+    //   `return to ${matrixnorm.fiberInfo(returnFiber)}`,
+    // );
     // Otherwise, return to the parent
     // $FlowFixMe[incompatible-type] we bail out when we get a null
     completedWork = returnFiber;
