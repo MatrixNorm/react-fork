@@ -3048,7 +3048,7 @@ function dispatchSetState<S, A>(
     `fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
     `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
     update,
-    matrixnorm.getStackTrace(2),
+    matrixnorm.getStackTrace(3),
   );
 
   if (isRenderPhaseUpdate(fiber)) {

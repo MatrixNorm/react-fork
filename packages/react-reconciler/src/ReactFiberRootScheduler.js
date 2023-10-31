@@ -345,6 +345,7 @@ function scheduleTaskForRootDuringMicrotask(
 
   // Schedule a new callback in the host environment.
   if (includesSyncLane(nextLanes)) {
+    console.log("nextLanes includes SyncLane")
     // Synchronous work is always flushed at the end of the microtask, so we
     // don't need to schedule an additional task.
     if (existingCallbackNode !== null) {

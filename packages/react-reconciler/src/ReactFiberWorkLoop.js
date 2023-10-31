@@ -1302,6 +1302,7 @@ function markRootSuspended(root: FiberRoot, suspendedLanes: Lanes) {
 // This is the entry point for synchronous tasks that don't go
 // through Scheduler
 export function performSyncWorkOnRoot(root: FiberRoot): null {
+  console.log(matrixnorm.getStackTrace(9));
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     syncNestedUpdateFlag();
   }
@@ -2551,8 +2552,11 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
 
     const siblingFiber = completedWork.sibling;
     if (siblingFiber !== null) {
-      console.log(`${matrixnorm.fiberInfo(completedWork)} has sibling
-                   ${matrixnorm.fiberInfo(siblingFiber)}`);
+      // console.log(
+      //   `${matrixnorm.fiberInfo(
+      //     completedWork,
+      //   )} has sibling ${matrixnorm.fiberInfo(siblingFiber)}`,
+      // );
       // If there is more work to do in this returnFiber, do that next.
       workInProgress = siblingFiber;
       return;

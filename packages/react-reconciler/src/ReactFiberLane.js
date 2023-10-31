@@ -18,6 +18,7 @@ export type Lanes = number;
 export type Lane = number;
 export type LaneMap<T> = Array<T>;
 
+import * as matrixnorm from 'matrixnorm';
 import {
   enableSchedulingProfiler,
   enableUpdaterTracking,
@@ -201,6 +202,7 @@ function getHighestPriorityLanes(lanes: Lanes | Lane): Lanes {
 export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   // Early bailout if there's no pending work left.
   const pendingLanes = root.pendingLanes;
+  console.log('root.pendingLanes: ', pendingLanes.toString(2), matrixnorm.getStackTrace(3));
   if (pendingLanes === NoLanes) {
     return NoLanes;
   }
@@ -581,6 +583,15 @@ export function createLaneMap<T>(initial: T): LaneMap<T> {
 }
 
 export function markRootUpdated(root: FiberRoot, updateLane: Lane) {
+  console.log(
+    'root.pendingLanes:',
+    root.pendingLanes.toString(2),
+    'updateLane:',
+    getLabelForLane(updateLane),
+    'root.pendingLanes | updateLane:',
+    (root.pendingLanes | updateLane).toString(2),
+    matrixnorm.getStackTrace(5)
+  );
   root.pendingLanes |= updateLane;
 
   // If there are any suspended transitions, it's possible this new update

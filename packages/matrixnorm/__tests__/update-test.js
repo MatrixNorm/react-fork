@@ -22,6 +22,7 @@ describe('update and re-render', () => {
     document.body.appendChild(containerForReactComponent);
 
     global.IS_REACT_ACT_ENVIRONMENT = false;
+    global.__DEV__ = false;
   });
 
   afterEach(() => {
@@ -60,6 +61,43 @@ describe('update and re-render', () => {
       .dispatchEvent(new MouseEvent('click', {bubbles: true}));
     await new Promise(queueMicrotask);
     console.log(document.body.innerHTML);
-    console.log("end of test");
+    console.log('end of test');
+  });
+
+  it('t2 update useTransition', async () => {
+    function App() {
+      console.log('=== App ===');
+      const [isPending, startTransition] = React.useTransition();
+      const [count, setCount] = React.useState(0);
+
+      function incrementCount() {
+        startTransition(() => {
+          console.log('=== incrementCount ===');
+          setCount(prev => prev + 1);
+        });
+      }
+
+      return (
+        <div>
+          <button onClick={incrementCount}></button>
+          <div>{count}</div>
+        </div>
+      );
+    }
+
+    const root = ReactDOMClient.createRoot(containerForReactComponent);
+    root.render(<App />);
+    await new Promise(queueMicrotask);
+    console.log('microtask queue is empty now');
+    Scheduler.unstable_flushNumberOfYields(1);
+    console.log(document.body.innerHTML);
+    await new Promise(queueMicrotask);
+    console.log('=== /// === UPDATE === /// ===');
+    containerForReactComponent
+      .querySelector('button')
+      .dispatchEvent(new MouseEvent('click', {bubbles: true}));
+    await new Promise(queueMicrotask);
+    console.log(document.body.innerHTML);
+    console.log('end of test');
   });
 });
