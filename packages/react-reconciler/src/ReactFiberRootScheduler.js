@@ -261,6 +261,7 @@ function processRootScheduleInMicrotask() {
 
     const nextLanes = scheduleTaskForRootDuringMicrotask(root, currentTime);
     if (nextLanes === NoLane) {
+      console.log('Nothing to do');
       // This root has no more pending work. Remove it from the schedule. To
       // guard against subtle reentrancy bugs, this microtask is the only place
       // we do this — you can add roots to the schedule whenever, but you can
@@ -345,7 +346,7 @@ function scheduleTaskForRootDuringMicrotask(
 
   // Schedule a new callback in the host environment.
   if (includesSyncLane(nextLanes)) {
-    console.log("nextLanes includes SyncLane")
+    console.log('nextLanes includes SyncLane');
     // Synchronous work is always flushed at the end of the microtask, so we
     // don't need to schedule an additional task.
     if (existingCallbackNode !== null) {

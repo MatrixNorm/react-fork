@@ -653,6 +653,7 @@ export function requestUpdateLane(fiber: Fiber): Lane {
   // TODO: Move this type conversion to the event priority module.
   const updateLane: Lane = (getCurrentUpdatePriority(): any);
   if (updateLane !== NoLane) {
+    console.log('@@@@@@@@@@@@@@@@@@@');
     return updateLane;
   }
 
@@ -662,6 +663,7 @@ export function requestUpdateLane(fiber: Fiber): Lane {
   // The opaque type returned by the host config is internally a lane, so we can
   // use that directly.
   // TODO: Move this type conversion to the event priority module.
+  console.log('@@@@@ eventLane');
   const eventLane: Lane = (getCurrentEventPriority(): any);
   return eventLane;
 }
@@ -889,6 +891,16 @@ export function performConcurrentWorkOnRoot(
     !includesBlockingLane(root, lanes) &&
     !includesExpiredLane(root, lanes) &&
     (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+
+  console.log(
+    'includesBlockingLane: ',
+    includesBlockingLane(root, lanes),
+    '\nincludesExpiredLane:',
+    includesExpiredLane(root, lanes),
+    '\n!disableSchedulerTimeoutInWorkLoop && didTimeout: ',
+    !disableSchedulerTimeoutInWorkLoop && didTimeout,
+  );
+
   let exitStatus = shouldTimeSlice
     ? renderRootConcurrent(root, lanes)
     : renderRootSync(root, lanes);

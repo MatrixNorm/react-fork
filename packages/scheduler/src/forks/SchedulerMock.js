@@ -460,7 +460,7 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 }
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
-  console.log("&&&&&&&&&& requestHostCallback &&&&&&&&&")
+  console.log('&&&&&&&&&& requestHostCallback &&&&&&&&&');
   scheduledCallback = callback;
 }
 
@@ -514,6 +514,7 @@ function reset() {
 
 // Should only be used via an assertion helper that inspects the yielded values.
 function unstable_flushNumberOfYields(count: number): void {
+  console.log('flushNumberOfYields ', count);
   if (isFlushing) {
     throw new Error('Already flushing work.');
   }

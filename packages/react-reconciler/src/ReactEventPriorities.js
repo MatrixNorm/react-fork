@@ -9,6 +9,7 @@
 
 import type {Lane, Lanes} from './ReactFiberLane';
 
+import * as matrixnorm from 'matrixnorm';
 import {
   NoLane,
   SyncLane,
@@ -29,10 +30,20 @@ export const IdleEventPriority: EventPriority = IdleLane;
 let currentUpdatePriority: EventPriority = NoLane;
 
 export function getCurrentUpdatePriority(): EventPriority {
+  // console.log(
+  //   'getCurrentUpdatePriority: ',
+  //   currentUpdatePriority,
+  //   matrixnorm.getStackTrace(5),
+  // );
   return currentUpdatePriority;
 }
 
 export function setCurrentUpdatePriority(newPriority: EventPriority) {
+  // console.log(
+  //   'setCurrentUpdatePriority to ',
+  //   newPriority,
+  //   matrixnorm.getStackTrace(5),
+  // );
   currentUpdatePriority = newPriority;
 }
 
