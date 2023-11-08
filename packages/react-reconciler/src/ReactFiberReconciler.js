@@ -330,7 +330,7 @@ export function updateContainer(
   const current = container.current;
   console.log(matrixnorm.fiberInfo(current));
   const lane = requestUpdateLane(current);
-  console.log('lane: ', getLabelForLane(lane));
+  //console.log('lane: ', getLabelForLane(lane));
   if (enableSchedulingProfiler) {
     markRenderScheduled(lane);
   }

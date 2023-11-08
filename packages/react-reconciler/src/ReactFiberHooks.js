@@ -3099,6 +3099,8 @@ function dispatchSetState<S, A>(
     }
 
     const root = enqueueConcurrentHookUpdate(fiber, queue, update, lane);
+    global.__matrixnorm_root = root;
+
     if (root !== null) {
       scheduleUpdateOnFiber(root, fiber, lane);
       entangleTransitionUpdate(root, queue, lane);

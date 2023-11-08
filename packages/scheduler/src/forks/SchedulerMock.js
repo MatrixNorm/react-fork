@@ -12,7 +12,7 @@
 
 import type {PriorityLevel} from '../SchedulerPriorities';
 
-import * as matnom from 'matrixnorm';
+import * as matrixnorm from 'matrixnorm';
 import {
   enableSchedulerDebugging,
   enableProfiling,
@@ -221,6 +221,7 @@ function workLoop(hasTimeRemaining: boolean, initialTime: number): boolean {
         markTaskRun(currentTask, currentTime);
       }
       const continuationCallback = callback(didUserCallbackTimeout);
+      console.log({continuationCallback});
       currentTime = getCurrentTime();
       if (typeof continuationCallback === 'function') {
         // If a continuation is returned, immediately yield to the main thread
@@ -342,7 +343,7 @@ function unstable_scheduleCallback(
   callback: Callback,
   options?: {delay: number},
 ): Task {
-  console.log(callback, matnom.getStackTrace(8));
+  console.log(callback, matrixnorm.getStackTrace(4));
   var currentTime = getCurrentTime();
 
   var startTime;
@@ -461,7 +462,7 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
   console.log('&&&&&&&&&& requestHostCallback &&&&&&&&&');
-  scheduledCallback = callback;
+  scheduledCallback = callback; // flushWork
 }
 
 function requestHostTimeout(callback: number => void, ms: number) {
@@ -475,6 +476,7 @@ function cancelHostTimeout(): void {
 }
 
 function shouldYieldToHost(): boolean {
+  const stackTrace = matrixnorm.getStackTrace(3);
   if (
     (expectedNumberOfYields === 0 && yieldedValues === null) ||
     (expectedNumberOfYields !== -1 &&
@@ -482,10 +484,12 @@ function shouldYieldToHost(): boolean {
       yieldedValues.length >= expectedNumberOfYields) ||
     (shouldYieldForPaint && needsPaint)
   ) {
+    console.log('!!! shouldYieldToHost: TRUE !!!', stackTrace);
     // We yielded at least as many values as expected. Stop flushing.
     didStop = true;
     return true;
   }
+  console.log('!!! shouldYieldToHost: FALSE !!!', stackTrace);
   return false;
 }
 
@@ -525,7 +529,7 @@ function unstable_flushNumberOfYields(count: number): void {
     try {
       let hasMoreWork = true;
       do {
-        hasMoreWork = cb(true, currentMockTime);
+        hasMoreWork = cb(true, currentMockTime); // flushWork(true, currentMockTime)
       } while (hasMoreWork && !didStop);
       if (!hasMoreWork) {
         scheduledCallback = null;

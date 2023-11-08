@@ -653,7 +653,6 @@ export function requestUpdateLane(fiber: Fiber): Lane {
   // TODO: Move this type conversion to the event priority module.
   const updateLane: Lane = (getCurrentUpdatePriority(): any);
   if (updateLane !== NoLane) {
-    console.log('@@@@@@@@@@@@@@@@@@@');
     return updateLane;
   }
 
@@ -663,7 +662,7 @@ export function requestUpdateLane(fiber: Fiber): Lane {
   // The opaque type returned by the host config is internally a lane, so we can
   // use that directly.
   // TODO: Move this type conversion to the event priority module.
-  console.log('@@@@@ eventLane');
+
   const eventLane: Lane = (getCurrentEventPriority(): any);
   return eventLane;
 }
@@ -887,23 +886,21 @@ export function performConcurrentWorkOnRoot(
   // TODO: We only check `didTimeout` defensively, to account for a Scheduler
   // bug we're still investigating. Once the bug in Scheduler is fixed,
   // we can remove this, since we track expiration ourselves.
-  const shouldTimeSlice =
-    !includesBlockingLane(root, lanes) &&
-    !includesExpiredLane(root, lanes) &&
-    (disableSchedulerTimeoutInWorkLoop || !didTimeout);
 
-  console.log(
-    'includesBlockingLane: ',
-    includesBlockingLane(root, lanes),
-    '\nincludesExpiredLane:',
-    includesExpiredLane(root, lanes),
-    '\n!disableSchedulerTimeoutInWorkLoop && didTimeout: ',
-    !disableSchedulerTimeoutInWorkLoop && didTimeout,
-  );
+  console.log('brute force time slicing');
+  const shouldTimeSlice = global.__matrixnorm_force_concurrent_render
+    ? true
+    : false;
+  // !includesBlockingLane(root, lanes) &&
+  // !includesExpiredLane(root, lanes) &&
+  // (disableSchedulerTimeoutInWorkLoop || !didTimeout);
 
   let exitStatus = shouldTimeSlice
     ? renderRootConcurrent(root, lanes)
     : renderRootSync(root, lanes);
+
+  console.log('exitStatus === RootInProgress: ', exitStatus === RootInProgress);
+
   if (exitStatus !== RootInProgress) {
     if (exitStatus === RootErrored) {
       // If something threw an error, try rendering one more time. We'll
@@ -2055,7 +2052,9 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
 
     workInProgressTransitions = getTransitionsForLanes(root, lanes);
     resetRenderTimer();
+    console.log(global.__matrixnorm_root === workInProgressRoot);
     prepareFreshStack(root, lanes);
+    console.log(global.__matrixnorm_root === workInProgressRoot);
   }
 
   if (__DEV__) {
@@ -2286,6 +2285,9 @@ function workLoopConcurrent() {
   while (workInProgress !== null && !shouldYield()) {
     // $FlowFixMe[incompatible-call] found when upgrading Flow
     performUnitOfWork(workInProgress);
+    if (global.__matrixnorm_force_concurrent_render) {
+      requestPaint();
+    }
   }
 }
 
@@ -2301,19 +2303,19 @@ function performUnitOfWork(unitOfWork: Fiber): void {
     let curHostRoot = workInProgressRoot.current;
     let wipHostRoot = curHostRoot.alternate;
 
-    // console.log(
-    //   'beginWork>>>',
-    //   `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
-    //   `\ncur: ${matrixnorm.fiberInfo(current)}`,
-    //   '\n\nwip fiber tree:\n',
-    //   wipHostRoot
-    //     ? `${tree2XML({
-    //         hostRoot: wipHostRoot,
-    //         altHostRoot: curHostRoot,
-    //         workInProgress: unitOfWork,
-    //       })}`
-    //     : '<>',
-    // );
+    console.log(
+      'beginWork>>>',
+      `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+      `\ncur: ${matrixnorm.fiberInfo(current)}`,
+      '\n\nwip fiber tree:\n',
+      wipHostRoot
+        ? `${tree2XML({
+            hostRoot: wipHostRoot,
+            altHostRoot: curHostRoot,
+            workInProgress: unitOfWork,
+          })}`
+        : '<>',
+    );
   }
 
   let next;
@@ -2324,10 +2326,10 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  // console.log(
-  //   '<<<beginWork',
-  //   `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
-  // );
+  console.log(
+    '<<<beginWork',
+    `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
+  );
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2543,7 +2545,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     const returnFiber = completedWork.return;
 
     setCurrentDebugFiberInDEV(completedWork);
-    //console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
+    console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
     let next;
     if (!enableProfilerTimer || (completedWork.mode & ProfileMode) === NoMode) {
       next = completeWork(current, completedWork, renderLanes);
@@ -2878,6 +2880,7 @@ function commitRootImpl(
     // the mutation phase, so that the previous tree is still current during
     // componentWillUnmount, but before the layout phase, so that the finished
     // work is current during componentDidMount/Update.
+    console.log(global.__matrixnorm_root === root)
     root.current = finishedWork;
 
     // The next phase is the layout phase, where we call effects that read
