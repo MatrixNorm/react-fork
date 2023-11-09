@@ -543,6 +543,7 @@ function unstable_flushNumberOfYields(count: number): void {
 }
 
 function unstable_flushUntilNextPaint(): false {
+  console.log('flushUntilNextPaint');
   if (isFlushing) {
     throw new Error('Already flushing work.');
   }
@@ -556,6 +557,7 @@ function unstable_flushUntilNextPaint(): false {
       do {
         hasMoreWork = cb(true, currentMockTime);
       } while (hasMoreWork && !didStop);
+      console.log({hasMoreWork});
       if (!hasMoreWork) {
         scheduledCallback = null;
       }

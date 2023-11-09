@@ -899,7 +899,11 @@ export function performConcurrentWorkOnRoot(
     ? renderRootConcurrent(root, lanes)
     : renderRootSync(root, lanes);
 
-  console.log('exitStatus === RootInProgress: ', exitStatus === RootInProgress);
+  {
+    exitStatus === RootInProgress && console.log('exitStatus: RootInProgress');
+    exitStatus === RootCompleted && console.log('exitStatus: RootCompleted');
+    exitStatus === RootSuspended && console.log('exitStatus: RootSuspended');
+  }
 
   if (exitStatus !== RootInProgress) {
     if (exitStatus === RootErrored) {
@@ -1171,7 +1175,7 @@ function finishConcurrentRender(
     {
       let tree2XML = matrixnorm.fiberTreeToXML;
       console.log(
-        'BEFORE COMMIT\n',
+        'BEFORE COMMIT\n\n',
         'current tree:\n',
         tree2XML({hostRoot: root.current}),
         '\nWIP tree:\n',
@@ -1190,7 +1194,7 @@ function finishConcurrentRender(
     {
       let tree2XML = matrixnorm.fiberTreeToXML;
       console.log(
-        'AFTER COMMIT\n',
+        'AFTER COMMIT\n\n',
         'current tree:\n',
         tree2XML({hostRoot: root.current}),
         '\nWIP tree:\n',
@@ -1922,7 +1926,20 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
     }
 
     workInProgressTransitions = getTransitionsForLanes(root, lanes);
+
+    global.__matrixnorm_root_dispatchSetState &&
+      console.log(
+        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
+        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
+      );
+
     prepareFreshStack(root, lanes);
+
+    global.__matrixnorm_root_dispatchSetState &&
+      console.log(
+        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
+        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
+      );
   }
 
   if (__DEV__) {
@@ -2052,9 +2069,20 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
 
     workInProgressTransitions = getTransitionsForLanes(root, lanes);
     resetRenderTimer();
-    console.log(global.__matrixnorm_root === workInProgressRoot);
+
+    global.__matrixnorm_root_dispatchSetState &&
+      console.log(
+        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
+        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
+      );
+
     prepareFreshStack(root, lanes);
-    console.log(global.__matrixnorm_root === workInProgressRoot);
+
+    global.__matrixnorm_root_dispatchSetState &&
+      console.log(
+        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
+        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
+      );
   }
 
   if (__DEV__) {
@@ -2698,7 +2726,6 @@ function commitRootImpl(
   transitions: Array<Transition> | null,
   renderPriorityLevel: EventPriority,
 ) {
-  console.log(matrixnorm.getStackTrace(7));
   do {
     // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
     // means `flushPassiveEffects` will sometimes result in additional
@@ -2865,10 +2892,8 @@ function commitRootImpl(
       // Updates scheduled during ref detachment should also be flagged.
       rootCommittingMutationOrLayoutEffects = root;
     }
-    console.log('before commitMutationEffects');
     // The next phase is the mutation phase, where we mutate the host tree.
     commitMutationEffects(root, finishedWork, lanes);
-    console.log('after commitMutationEffects');
     if (enableCreateEventHandleAPI) {
       if (shouldFireAfterActiveInstanceBlur) {
         afterActiveInstanceBlur();
@@ -2880,7 +2905,11 @@ function commitRootImpl(
     // the mutation phase, so that the previous tree is still current during
     // componentWillUnmount, but before the layout phase, so that the finished
     // work is current during componentDidMount/Update.
-    console.log(global.__matrixnorm_root === root)
+    global.__matrixnorm_root_dispatchSetState &&
+      console.log(
+        '__matrixnorm_root_dispatchSetState === root: ',
+        global.__matrixnorm_root_dispatchSetState === root,
+      );
     root.current = finishedWork;
 
     // The next phase is the layout phase, where we call effects that read

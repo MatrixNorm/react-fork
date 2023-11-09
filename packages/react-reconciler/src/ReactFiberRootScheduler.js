@@ -83,7 +83,6 @@ let isFlushingWork: boolean = false;
 let currentEventTransitionLane: Lane = NoLane;
 
 export function ensureRootIsScheduled(root: FiberRoot): void {
-  console.log(matrixnorm.getStackTrace(8));
   // This function is called whenever a root receives an update. It does two
   // things 1) it ensures the root is in the root schedule, and 2) it ensures
   // there's a pending microtask to process the root schedule.
@@ -119,7 +118,10 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
   } else {
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
-      console.log('put processRootScheduleInMicrotask to microtask queue');
+      console.log(
+        'put processRootScheduleInMicrotask to microtask queue',
+        matrixnorm.getStackTrace(3),
+      );
       scheduleImmediateTask(processRootScheduleInMicrotask);
     }
   }
@@ -343,7 +345,7 @@ function scheduleTaskForRootDuringMicrotask(
     root.callbackPriority = NoLane;
     return NoLane;
   }
-
+  
   // Schedule a new callback in the host environment.
   if (includesSyncLane(nextLanes)) {
     console.log('nextLanes includes SyncLane');
@@ -359,7 +361,7 @@ function scheduleTaskForRootDuringMicrotask(
     // We use the highest priority lane to represent the priority of the callback.
     const existingCallbackPriority = root.callbackPriority;
     const newCallbackPriority = getHighestPriorityLane(nextLanes);
-
+    
     if (
       newCallbackPriority === existingCallbackPriority &&
       // Special case related to `act`. If the currently scheduled task is a
@@ -371,6 +373,7 @@ function scheduleTaskForRootDuringMicrotask(
         existingCallbackNode !== fakeActCallbackNode
       )
     ) {
+      console.log("We can reuse the existing task", matrixnorm.getStackTrace(3))
       // The priority hasn't changed. We can reuse the existing task.
       return newCallbackPriority;
     } else {
@@ -403,6 +406,8 @@ function scheduleTaskForRootDuringMicrotask(
     );
 
     root.callbackPriority = newCallbackPriority;
+
+    console.log('set root.callbackNode to newCallbackNode');
     root.callbackNode = newCallbackNode;
     return newCallbackPriority;
   }

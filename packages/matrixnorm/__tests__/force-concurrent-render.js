@@ -61,6 +61,9 @@ describe('force concurrent render', () => {
     incrementCount();
     await __queue(3);
     Scheduler.unstable_flushUntilNextPaint();
+    await __queue(4);
+    Scheduler.unstable_flushUntilNextPaint();
+    await __queue(5);
     console.log(document.body.innerHTML);
     console.log('end of test');
   });

@@ -2496,6 +2496,7 @@ export function commitMutationEffects(
   finishedWork: Fiber,
   committedLanes: Lanes,
 ) {
+  console.log(matrixnorm.getStackTrace(7));
   inProgressLanes = committedLanes;
   inProgressRoot = root;
 
