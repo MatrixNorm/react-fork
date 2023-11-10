@@ -2331,19 +2331,20 @@ function performUnitOfWork(unitOfWork: Fiber): void {
     let curHostRoot = workInProgressRoot.current;
     let wipHostRoot = curHostRoot.alternate;
 
-    console.log(
-      'beginWork>>>',
-      `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
-      `\ncur: ${matrixnorm.fiberInfo(current)}`,
-      '\n\nwip fiber tree:\n',
-      wipHostRoot
-        ? `${tree2XML({
-            hostRoot: wipHostRoot,
-            altHostRoot: curHostRoot,
-            workInProgress: unitOfWork,
-          })}`
-        : '<>',
-    );
+    global.__matrixnorm_enableFiberTreeTracing &&
+      console.log(
+        'beginWork>>>',
+        `\nwip: ${matrixnorm.fiberInfo(unitOfWork)}`,
+        `\ncur: ${matrixnorm.fiberInfo(current)}`,
+        '\n\nwip fiber tree:\n',
+        wipHostRoot
+          ? `${tree2XML({
+              hostRoot: wipHostRoot,
+              altHostRoot: curHostRoot,
+              workInProgress: unitOfWork,
+            })}`
+          : '<>',
+      );
   }
 
   let next;
@@ -2354,10 +2355,12 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, renderLanes);
   }
-  console.log(
-    '<<<beginWork',
-    `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
-  );
+
+  global.__matrixnorm_enableFiberTreeTracing &&
+    console.log(
+      '<<<beginWork',
+      `\nnext: ${next ? matrixnorm.fiberInfo(next) : 'NULL'}`,
+    );
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -2573,7 +2576,8 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     const returnFiber = completedWork.return;
 
     setCurrentDebugFiberInDEV(completedWork);
-    console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
+    global.__matrixnorm_enableFiberTreeTracing &&
+      console.log('completeWork>>>', matrixnorm.fiberInfo(completedWork));
     let next;
     if (!enableProfilerTimer || (completedWork.mode & ProfileMode) === NoMode) {
       next = completeWork(current, completedWork, renderLanes);
@@ -2586,7 +2590,8 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
 
     resetCurrentDebugFiberInDEV();
     if (next !== null) {
-      console.log('<<<completeWork', `next: ${matrixnorm.fiberInfo(next)}`);
+      global.__matrixnorm_enableFiberTreeTracing &&
+        console.log('<<<completeWork', `next: ${matrixnorm.fiberInfo(next)}`);
       // Completing this fiber spawned new work. Work on that next.
       workInProgress = next;
       return;

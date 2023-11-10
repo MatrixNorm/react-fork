@@ -70,6 +70,10 @@ var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt;
 var taskQueue: Array<Task> = [];
 var timerQueue: Array<Task> = [];
 
+export function getTaskQueue(): Array<Task> {
+  return taskQueue;
+}
+
 // Incrementing id counter. Used to maintain insertion order.
 var taskIdCounter = 1;
 
@@ -450,6 +454,7 @@ function unstable_cancelCallback(task: Task) {
     }
   }
 
+  console.log('cancelCallback', matrixnorm.getStackTrace(5));
   // Null out the callback to indicate the task has been canceled. (Can't
   // remove from the queue because you can't remove arbitrary nodes from an
   // array based heap, only the first one.)
