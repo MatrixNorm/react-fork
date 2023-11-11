@@ -118,10 +118,6 @@ export function ensureRootIsScheduled(root: FiberRoot): void {
   } else {
     if (!didScheduleMicrotask) {
       didScheduleMicrotask = true;
-      console.log(
-        'put processRootScheduleInMicrotask to microtask queue',
-        matrixnorm.getStackTrace(3),
-      );
       scheduleImmediateTask(processRootScheduleInMicrotask);
     }
   }
@@ -477,7 +473,11 @@ function scheduleImmediateTask(cb: () => mixed) {
   // TODO: Can we land supportsMicrotasks? Which environments don't support it?
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
-    scheduleMicrotask(() => {
+    console.log(
+      'put processRootScheduleInMicrotask to microtask queue',
+      matrixnorm.getStackTrace(5),
+    );
+    queueMicrotask(() => {
       // In Safari, appending an iframe forces microtasks to run.
       // https://github.com/facebook/react/issues/22459
       // We don't support running callbacks in the middle of render

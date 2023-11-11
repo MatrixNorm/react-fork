@@ -453,12 +453,11 @@ function unstable_cancelCallback(task: Task) {
       task.isQueued = false;
     }
   }
-
-  console.log('cancelCallback', matrixnorm.getStackTrace(5));
   // Null out the callback to indicate the task has been canceled. (Can't
   // remove from the queue because you can't remove arbitrary nodes from an
   // array based heap, only the first one.)
   task.callback = null;
+  console.log('cancelCallback', getTaskQueue(), matrixnorm.getStackTrace(5));
 }
 
 function unstable_getCurrentPriorityLevel(): PriorityLevel {
@@ -466,7 +465,11 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 }
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
-  console.log('&&&&&&&&&& requestHostCallback &&&&&&&&&');
+  console.log(
+    '&&&&&&&&&& requestHostCallback &&&&&&&&&',
+    getTaskQueue(),
+    matrixnorm.getStackTrace(9),
+  );
   scheduledCallback = callback; // flushWork
 }
 

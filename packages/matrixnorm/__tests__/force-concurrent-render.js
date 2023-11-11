@@ -110,7 +110,7 @@ describe('force concurrent render', () => {
     Scheduler.unstable_flushUntilNextPaint();
     await __queue(4);
     Scheduler.unstable_flushUntilNextPaint();
-    await __queue("4.1");
+    await __queue('4.1');
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
     //global.__matrixnorm_enableFiberTreeTracing = false;
@@ -122,8 +122,11 @@ describe('force concurrent render', () => {
     await __queue(5);
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
-    Scheduler.unstable_flushUntilNextPaint();
-    await __queue(6);
+
+    // global.__matrixnorm_force_concurrent_render = false;
+    // Scheduler.unstable_flushUntilNextPaint();
+    // await __queue(6);
+    // console.log(document.body.innerHTML);
     console.log('end of test');
   });
 });

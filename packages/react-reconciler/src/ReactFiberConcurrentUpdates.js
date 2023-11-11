@@ -48,8 +48,18 @@ let concurrentQueuesIndex = 0;
 
 let concurrentlyUpdatedLanes: Lanes = NoLanes;
 
+export function inspectConcurrentQueues(): Array<any> {
+  return concurrentQueues.map((el, j) => {
+    if (j % 4 === 0) {
+      return matrixnorm.fiberInfo(el);
+    } else {
+      return el;
+    }
+  });
+}
+
 export function finishQueueingConcurrentUpdates(): void {
-  console.log('finishQueueingConcurrentUpdates', matrixnorm.getStackTrace(5));
+  console.log(inspectConcurrentQueues(), matrixnorm.getStackTrace(5));
   const endIndex = concurrentQueuesIndex;
   concurrentQueuesIndex = 0;
 
@@ -82,6 +92,7 @@ export function finishQueueingConcurrentUpdates(): void {
       markUpdateLaneFromFiberToRoot(fiber, update, lane);
     }
   }
+  console.log(inspectConcurrentQueues());
 }
 
 export function getConcurrentlyUpdatedLanes(): Lanes {
@@ -94,11 +105,6 @@ function enqueueUpdate(
   update: ConcurrentUpdate | null,
   lane: Lane,
 ) {
-  console.log(
-    '$$ enqueueUpdate $$',
-    `fiber: ${matrixnorm.fiberInfo(fiber)}`,
-    matrixnorm.getStackTrace(5),
-  );
   // Don't update the `childLanes` on the return path yet. If we already in
   // the middle of rendering, wait until after it has completed.
   concurrentQueues[concurrentQueuesIndex++] = fiber;
@@ -116,6 +122,8 @@ function enqueueUpdate(
   if (alternate !== null) {
     alternate.lanes = mergeLanes(alternate.lanes, lane);
   }
+
+  console.log(inspectConcurrentQueues(), matrixnorm.getStackTrace(5));
 }
 
 export function enqueueConcurrentHookUpdate<S, A>(
