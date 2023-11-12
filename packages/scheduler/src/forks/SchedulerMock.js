@@ -466,7 +466,10 @@ function unstable_getCurrentPriorityLevel(): PriorityLevel {
 
 function requestHostCallback(callback: (boolean, number) => boolean) {
   console.log(
-    '&&&&&&&&&& requestHostCallback &&&&&&&&&',
+    ' &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n',
+    '&&&&&&&&&& requestHostCallback &&&&&&&&&\n',
+    '&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\n',
+    'Task Queue:\n',
     getTaskQueue(),
     matrixnorm.getStackTrace(9),
   );
@@ -551,7 +554,11 @@ function unstable_flushNumberOfYields(count: number): void {
 }
 
 function unstable_flushUntilNextPaint(): false {
-  console.log('flushUntilNextPaint');
+  console.log(
+    ' -------------------\n',
+    'flushUntilNextPaint\n',
+    '-------------------',
+  );
   if (isFlushing) {
     throw new Error('Already flushing work.');
   }

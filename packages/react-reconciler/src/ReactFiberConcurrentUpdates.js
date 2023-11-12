@@ -76,6 +76,8 @@ export function finishQueueingConcurrentUpdates(): void {
     const lane: Lane = concurrentQueues[i];
     concurrentQueues[i++] = null;
 
+    console.log('queue before: \n', queue);
+
     if (queue !== null && update !== null) {
       const pending = queue.pending;
       if (pending === null) {
@@ -87,6 +89,9 @@ export function finishQueueingConcurrentUpdates(): void {
       }
       queue.pending = update;
     }
+
+    console.log('queue after: \n', queue);
+    console.log(matrixnorm.fiberInfo(fiber), '\n', fiber.memoizedState);
 
     if (lane !== NoLane) {
       markUpdateLaneFromFiberToRoot(fiber, update, lane);
@@ -123,7 +128,11 @@ function enqueueUpdate(
     alternate.lanes = mergeLanes(alternate.lanes, lane);
   }
 
-  console.log(inspectConcurrentQueues(), matrixnorm.getStackTrace(5));
+  console.log(
+    'concurrentQueues after new update added:\n',
+    inspectConcurrentQueues(),
+    matrixnorm.getStackTrace(5),
+  );
 }
 
 export function enqueueConcurrentHookUpdate<S, A>(

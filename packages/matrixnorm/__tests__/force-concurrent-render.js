@@ -2,7 +2,8 @@
 
 function __queue(label) {
   const msg = label ? `wait for microtasks ${label}` : 'wait for microtasks';
-  console.log(msg);
+  const line = '-'.repeat(21 + label.toString().length);
+  console.log(line + '\n', msg, '\n' + line);
   return new Promise(queueMicrotask);
 }
 
@@ -102,20 +103,28 @@ describe('force concurrent render', () => {
     console.log(document.body.innerHTML);
     await __queue(2);
 
-    console.log('=== /// === UPDATE COUNT === /// ===');
+    console.log(
+      ' *******************************************************************************\n',
+      '***************** UPDATE COUNT   UPDATE COUNT   UPDATE COUNT *******************\n',
+      '********************************************************************************'
+    );
     global.__matrixnorm_force_concurrent_render = true;
     global.__matrixnorm_enableFiberTreeTracing = true;
     incrementCount();
     await __queue(3);
     Scheduler.unstable_flushUntilNextPaint();
     await __queue(4);
-    Scheduler.unstable_flushUntilNextPaint();
-    await __queue('4.1');
+    // Scheduler.unstable_flushUntilNextPaint();
+    // await __queue('4.1');
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
     //global.__matrixnorm_enableFiberTreeTracing = false;
 
-    console.log('=== /// === UPDATE SUM === /// ===');
+    console.log(
+      ' ****************************************************************************\n',
+      '****************** UPDATE SUM   UPDATE SUM   UPDATE SUM ********************\n',
+      '****************************************************************************'
+    );
     containerForReactComponent
       .querySelector('button')
       .dispatchEvent(new MouseEvent('click', {bubbles: true}));
@@ -123,10 +132,10 @@ describe('force concurrent render', () => {
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
 
-    // global.__matrixnorm_force_concurrent_render = false;
-    // Scheduler.unstable_flushUntilNextPaint();
-    // await __queue(6);
-    // console.log(document.body.innerHTML);
+    global.__matrixnorm_force_concurrent_render = false;
+    Scheduler.unstable_flushUntilNextPaint();
+    await __queue(6);
+    console.log(document.body.innerHTML);
     console.log('end of test');
   });
 });

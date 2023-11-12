@@ -887,13 +887,13 @@ export function performConcurrentWorkOnRoot(
   // bug we're still investigating. Once the bug in Scheduler is fixed,
   // we can remove this, since we track expiration ourselves.
 
-  console.log('brute force time slicing');
   const shouldTimeSlice = global.__matrixnorm_force_concurrent_render
     ? true
     : false;
   // !includesBlockingLane(root, lanes) &&
   // !includesExpiredLane(root, lanes) &&
   // (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+  console.log({shouldTimeSlice});
 
   let exitStatus = shouldTimeSlice
     ? renderRootConcurrent(root, lanes)

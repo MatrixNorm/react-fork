@@ -320,6 +320,8 @@ function scheduleTaskForRootDuringMicrotask(
     root === workInProgressRoot ? workInProgressRootRenderLanes : NoLanes,
   );
 
+  console.log({nextLanes});
+
   const existingCallbackNode = root.callbackNode;
   if (
     // Check if there's nothing to work on
@@ -341,7 +343,7 @@ function scheduleTaskForRootDuringMicrotask(
     root.callbackPriority = NoLane;
     return NoLane;
   }
-  
+
   // Schedule a new callback in the host environment.
   if (includesSyncLane(nextLanes)) {
     console.log('nextLanes includes SyncLane');
@@ -357,7 +359,7 @@ function scheduleTaskForRootDuringMicrotask(
     // We use the highest priority lane to represent the priority of the callback.
     const existingCallbackPriority = root.callbackPriority;
     const newCallbackPriority = getHighestPriorityLane(nextLanes);
-    
+
     if (
       newCallbackPriority === existingCallbackPriority &&
       // Special case related to `act`. If the currently scheduled task is a
@@ -369,7 +371,10 @@ function scheduleTaskForRootDuringMicrotask(
         existingCallbackNode !== fakeActCallbackNode
       )
     ) {
-      console.log("We can reuse the existing task", matrixnorm.getStackTrace(3))
+      console.log(
+        'We can reuse the existing task',
+        matrixnorm.getStackTrace(3),
+      );
       // The priority hasn't changed. We can reuse the existing task.
       return newCallbackPriority;
     } else {
@@ -474,7 +479,9 @@ function scheduleImmediateTask(cb: () => mixed) {
   // Alternatively, can we move this check to the host config?
   if (supportsMicrotasks) {
     console.log(
-      'put processRootScheduleInMicrotask to microtask queue',
+      ' -----------------------------------------------------\n',
+      'put processRootScheduleInMicrotask to microtask queue \n',
+      '-----------------------------------------------------\n',
       matrixnorm.getStackTrace(5),
     );
     queueMicrotask(() => {

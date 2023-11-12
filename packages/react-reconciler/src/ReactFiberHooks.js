@@ -3100,7 +3100,8 @@ function dispatchSetState<S, A>(
     }
 
     const root = enqueueConcurrentHookUpdate(fiber, queue, update, lane);
-    console.log('set global.__matrixnorm_root_dispatchSetState');
+    
+    //console.log('set global.__matrixnorm_root_dispatchSetState');
     global.__matrixnorm_root_dispatchSetState = root;
 
     if (root !== null) {
