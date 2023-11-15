@@ -1183,6 +1183,17 @@ function updateReducerImpl<S, A>(
   current: Hook,
   reducer: (S, A) => S,
 ): [S, Dispatch<A>] {
+  console.log(
+    'hook:\n',
+    hook,
+    '\ncurrent:\n',
+    current,
+    '\nhook === current: ',
+    hook === current,
+    '\nhook.queue === current.queue: ',
+    hook.queue === current.queue,
+  );
+
   const queue = hook.queue;
 
   if (queue === null) {
@@ -1222,6 +1233,15 @@ function updateReducerImpl<S, A>(
     queue.pending = null;
   }
 
+  console.log(
+    'hook:\n',
+    hook,
+    '\ncurrent:\n',
+    current,
+    '\nhook.queue === current.queue: ',
+    hook.queue === current.queue,
+  );
+
   if (baseQueue !== null) {
     // We have a queue to process.
     const first = baseQueue.next;
@@ -1244,6 +1264,8 @@ function updateReducerImpl<S, A>(
       const shouldSkipUpdate = isHiddenUpdate
         ? !isSubsetOfLanes(getWorkInProgressRootRenderLanes(), updateLane)
         : !isSubsetOfLanes(renderLanes, updateLane);
+
+      console.log({isHiddenUpdate, shouldSkipUpdate, renderLanes, updateLane});
 
       if (shouldSkipUpdate) {
         // Priority is insufficient. Skip this update. If this is the first
@@ -1338,6 +1360,14 @@ function updateReducerImpl<S, A>(
           }
         }
 
+        console.log({
+          newBaseState,
+          newBaseQueueFirst,
+          newBaseQueueLast,
+          update,
+          shouldDoubleInvokeUserFnsInHooksDEV
+        });
+
         // Process this update.
         const action = update.action;
         if (shouldDoubleInvokeUserFnsInHooksDEV) {
@@ -1372,6 +1402,15 @@ function updateReducerImpl<S, A>(
 
     queue.lastRenderedState = newState;
   }
+
+  console.log(
+    'hook:\n',
+    hook,
+    '\ncurrent:\n',
+    current,
+    '\nhook.queue === current.queue: ',
+    hook.queue === current.queue,
+  );
 
   if (baseQueue === null) {
     // `queue.lanes` is used for entangling transitions. We can set it back to
@@ -3100,7 +3139,7 @@ function dispatchSetState<S, A>(
     }
 
     const root = enqueueConcurrentHookUpdate(fiber, queue, update, lane);
-    
+
     //console.log('set global.__matrixnorm_root_dispatchSetState');
     global.__matrixnorm_root_dispatchSetState = root;
 

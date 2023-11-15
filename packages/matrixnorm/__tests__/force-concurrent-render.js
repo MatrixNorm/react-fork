@@ -75,23 +75,23 @@ describe('force concurrent render', () => {
     function App() {
       console.log('=== App ===');
       const [count, setCount] = React.useState(0);
-      const [sum, setSum] = React.useState(0);
+      const [word, setWord] = React.useState("A");
 
       incrementCount = () => {
         console.log('=== incrementCount ===');
         setCount(prev => prev + 1);
       };
 
-      const incrementSum = () => {
-        console.log('=== incrementSum ===');
-        setSum(prev => prev + 1);
+      const incrementWord = () => {
+        console.log('=== incrementWord ===');
+        setWord("B");
       };
 
       return (
         <div>
-          <button onClick={incrementSum}></button>
-          <div>{sum}</div>
           <div>{count}</div>
+          <div>{word}</div>
+          <button onClick={incrementWord}></button>
         </div>
       );
     }
@@ -114,16 +114,15 @@ describe('force concurrent render', () => {
     await __queue(3);
     Scheduler.unstable_flushUntilNextPaint();
     await __queue(4);
-    // Scheduler.unstable_flushUntilNextPaint();
-    // await __queue('4.1');
+    Scheduler.unstable_flushUntilNextPaint();
+    await __queue("4.1");
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
-    //global.__matrixnorm_enableFiberTreeTracing = false;
 
     console.log(
-      ' ****************************************************************************\n',
-      '****************** UPDATE SUM   UPDATE SUM   UPDATE SUM ********************\n',
-      '****************************************************************************'
+      ' ******************************************************************************\n',
+      '****************** UPDATE WORD   UPDATE WORD   UPDATE WORD ********************\n',
+      '*******************************************************************************'
     );
     containerForReactComponent
       .querySelector('button')
@@ -131,6 +130,12 @@ describe('force concurrent render', () => {
     await __queue(5);
     console.log(Scheduler.getTaskQueue());
     console.log(document.body.innerHTML);
+
+    console.log(
+      ' *******************************************************************************\n',
+      '***************** UPDATE COUNT 2 UPDATE COUNT 2 UPDATE COUNT 2 ******************\n',
+      '*********************************************************************************'
+    );
 
     global.__matrixnorm_force_concurrent_render = false;
     Scheduler.unstable_flushUntilNextPaint();
