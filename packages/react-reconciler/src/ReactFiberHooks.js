@@ -1265,7 +1265,13 @@ function updateReducerImpl<S, A>(
         ? !isSubsetOfLanes(getWorkInProgressRootRenderLanes(), updateLane)
         : !isSubsetOfLanes(renderLanes, updateLane);
 
-      console.log({isHiddenUpdate, shouldSkipUpdate, renderLanes, updateLane});
+      console.log({
+        update,
+        isHiddenUpdate,
+        shouldSkipUpdate,
+        renderLanes,
+        updateLane,
+      });
 
       if (shouldSkipUpdate) {
         // Priority is insufficient. Skip this update. If this is the first
@@ -1364,8 +1370,7 @@ function updateReducerImpl<S, A>(
           newBaseState,
           newBaseQueueFirst,
           newBaseQueueLast,
-          update,
-          shouldDoubleInvokeUserFnsInHooksDEV
+          shouldDoubleInvokeUserFnsInHooksDEV,
         });
 
         // Process this update.
@@ -1380,6 +1385,7 @@ function updateReducerImpl<S, A>(
         } else {
           newState = reducer(newState, action);
         }
+        console.log({newState});
       }
       update = update.next;
     } while (update !== null && update !== first);
@@ -3084,11 +3090,12 @@ function dispatchSetState<S, A>(
   };
 
   console.log(
-    `fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
+    ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
     `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
-    'update: ',
-    update,
-    matrixnorm.getStackTrace(5),
+    `update: ${util.inspect(update)}\n`,
+    'fiber hooks: ',
+    fiber.memoizedState,
+    matrixnorm.getStackTrace(2),
   );
 
   if (isRenderPhaseUpdate(fiber)) {
@@ -3139,9 +3146,6 @@ function dispatchSetState<S, A>(
     }
 
     const root = enqueueConcurrentHookUpdate(fiber, queue, update, lane);
-
-    //console.log('set global.__matrixnorm_root_dispatchSetState');
-    global.__matrixnorm_root_dispatchSetState = root;
 
     if (root !== null) {
       scheduleUpdateOnFiber(root, fiber, lane);

@@ -2069,20 +2069,7 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
 
     workInProgressTransitions = getTransitionsForLanes(root, lanes);
     resetRenderTimer();
-
-    global.__matrixnorm_root_dispatchSetState &&
-      console.log(
-        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
-        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
-      );
-
     prepareFreshStack(root, lanes);
-
-    global.__matrixnorm_root_dispatchSetState &&
-      console.log(
-        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
-        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
-      );
   }
 
   if (__DEV__) {
