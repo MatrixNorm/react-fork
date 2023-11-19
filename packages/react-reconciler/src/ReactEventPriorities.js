@@ -39,11 +39,10 @@ export function getCurrentUpdatePriority(): EventPriority {
 }
 
 export function setCurrentUpdatePriority(newPriority: EventPriority) {
-  // console.log(
-  //   'setCurrentUpdatePriority to ',
-  //   newPriority,
-  //   matrixnorm.getStackTrace(5),
-  // );
+  console.log(
+    `setCurrentUpdatePriority to ${newPriority}`,
+  //  matrixnorm.getStackTrace(5),
+  );
   currentUpdatePriority = newPriority;
 }
 

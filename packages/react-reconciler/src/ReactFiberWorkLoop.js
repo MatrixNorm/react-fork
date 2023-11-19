@@ -887,12 +887,11 @@ export function performConcurrentWorkOnRoot(
   // bug we're still investigating. Once the bug in Scheduler is fixed,
   // we can remove this, since we track expiration ourselves.
 
-  const shouldTimeSlice = global.__matrixnorm_force_concurrent_render
-    ? true
-    : false;
-  // !includesBlockingLane(root, lanes) &&
-  // !includesExpiredLane(root, lanes) &&
-  // (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+  const shouldTimeSlice =
+    !includesBlockingLane(root, lanes) &&
+    !includesExpiredLane(root, lanes) &&
+    (disableSchedulerTimeoutInWorkLoop || !didTimeout);
+
   console.log({shouldTimeSlice});
 
   let exitStatus = shouldTimeSlice
@@ -1926,20 +1925,7 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
     }
 
     workInProgressTransitions = getTransitionsForLanes(root, lanes);
-
-    global.__matrixnorm_root_dispatchSetState &&
-      console.log(
-        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
-        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
-      );
-
     prepareFreshStack(root, lanes);
-
-    global.__matrixnorm_root_dispatchSetState &&
-      console.log(
-        '__matrixnorm_root_dispatchSetState === workInProgressRoot: ',
-        global.__matrixnorm_root_dispatchSetState === workInProgressRoot,
-      );
   }
 
   if (__DEV__) {
@@ -2300,9 +2286,6 @@ function workLoopConcurrent() {
   while (workInProgress !== null && !shouldYield()) {
     // $FlowFixMe[incompatible-call] found when upgrading Flow
     performUnitOfWork(workInProgress);
-    if (global.__matrixnorm_force_concurrent_render) {
-      requestPaint();
-    }
   }
 }
 
@@ -2574,7 +2557,6 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       // Update render duration assuming we didn't error.
       stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
     }
-
     resetCurrentDebugFiberInDEV();
     if (next !== null) {
       global.__matrixnorm_enableFiberTreeTracing &&
@@ -2897,11 +2879,6 @@ function commitRootImpl(
     // the mutation phase, so that the previous tree is still current during
     // componentWillUnmount, but before the layout phase, so that the finished
     // work is current during componentDidMount/Update.
-    global.__matrixnorm_root_dispatchSetState &&
-      console.log(
-        '__matrixnorm_root_dispatchSetState === root: ',
-        global.__matrixnorm_root_dispatchSetState === root,
-      );
     root.current = finishedWork;
 
     // The next phase is the layout phase, where we call effects that read

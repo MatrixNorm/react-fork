@@ -2689,7 +2689,9 @@ function startTransition<S>(
   callback: () => mixed,
   options?: StartTransitionOptions,
 ): void {
+  console.log('startTransition');
   const previousPriority = getCurrentUpdatePriority();
+  console.log({previousPriority});
   setCurrentUpdatePriority(
     higherEventPriority(previousPriority, ContinuousEventPriority),
   );
@@ -3094,7 +3096,7 @@ function dispatchSetState<S, A>(
     `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
     `update: ${util.inspect(update)}\n`,
     'fiber hooks: ',
-    fiber.memoizedState,
+    util.inspect(fiber.memoizedState, {depth: 5}),
     matrixnorm.getStackTrace(2),
   );
 
