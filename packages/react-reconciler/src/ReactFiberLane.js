@@ -202,6 +202,7 @@ function getHighestPriorityLanes(lanes: Lanes | Lane): Lanes {
 export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   // Early bailout if there's no pending work left.
   const pendingLanes = root.pendingLanes;
+  console.log({pendingLanes});
   //console.log('root.pendingLanes: ', pendingLanes.toString(2), matrixnorm.getStackTrace(3));
   if (pendingLanes === NoLanes) {
     return NoLanes;
@@ -214,7 +215,8 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
 
   // Do not work on any idle work until all the non-idle work has finished,
   // even if the work is suspended.
-  const nonIdlePendingLanes = pendingLanes & NonIdleLanes;
+  const nonIdlePendingLanes = pendingLanes & NonIdleLanes; // 0b0001111111111111111111111111111
+  console.log({nonIdlePendingLanes, nextLanes});
   if (nonIdlePendingLanes !== NoLanes) {
     const nonIdleUnblockedLanes = nonIdlePendingLanes & ~suspendedLanes;
     if (nonIdleUnblockedLanes !== NoLanes) {
@@ -236,6 +238,7 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
       }
     }
   }
+  console.log({nextLanes});
 
   if (nextLanes === NoLanes) {
     // This should only be reachable if we're suspended
@@ -284,8 +287,8 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
 
   // Check for entangled lanes and add them to the batch.
   //
-  // A lane is said to be entangled with another when it's not allowed to render
-  // in a batch that does not also include the other lane. Typically we do this
+  // A lane X is said to be entangled with another lane Y when it's not allowed
+  // to render X in a batch that does not also include Y. Typically we do this
   // when multiple updates have the same source, and we only want to respond to
   // the most recent event from that source.
   //
@@ -583,7 +586,9 @@ export function createLaneMap<T>(initial: T): LaneMap<T> {
 }
 
 export function markRootUpdated(root: FiberRoot, updateLane: Lane) {
+  console.log({"root.pendingLanes": root.pendingLanes, updateLane});
   root.pendingLanes |= updateLane;
+  console.log({"root.pendingLanes": root.pendingLanes});
 
   // If there are any suspended transitions, it's possible this new update
   // could unblock them. Clear the suspended lanes so that we can try rendering

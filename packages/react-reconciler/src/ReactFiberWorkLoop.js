@@ -25,6 +25,7 @@ import type {OffscreenInstance} from './ReactFiberOffscreenComponent';
 import type {RenderTaskFn} from './ReactFiberRootScheduler';
 
 import * as matrixnorm from 'matrixnorm';
+import * as util from 'util';
 import {
   replayFailedUnitOfWorkWithInvokeGuardedCallback,
   enableCreateEventHandleAPI,
@@ -1192,12 +1193,20 @@ function finishConcurrentRender(
 
     {
       let tree2XML = matrixnorm.fiberTreeToXML;
+      const hostRoot = root.current;
       console.log(
         'AFTER COMMIT\n\n',
         'current tree:\n',
-        tree2XML({hostRoot: root.current}),
+        tree2XML({hostRoot}),
         '\nWIP tree:\n',
-        tree2XML({hostRoot: root.current.alternate}),
+        hostRoot.alternate && tree2XML({hostRoot: hostRoot.alternate}),
+      );
+
+      console.log(
+        'fiber: ',
+        matrixnorm.fiberInfo(hostRoot.child),
+        '\nhooks: \n',
+        hostRoot.child && matrixnorm.listHooks(hostRoot.child),
       );
     }
   }

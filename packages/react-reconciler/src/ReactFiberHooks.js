@@ -914,7 +914,7 @@ export function resetHooksOnUnwind(workInProgress: Fiber): void {
 }
 
 function mountWorkInProgressHook(): Hook {
-  console.log(matrixnorm.getStackTrace(3));
+  //console.log(matrixnorm.getStackTrace(3));
   const hook: Hook = {
     memoizedState: null,
 
@@ -2051,13 +2051,21 @@ function mountStateImpl<S>(initialState: (() => S) | S): Hook {
     lastRenderedState: (initialState: any),
   };
   hook.queue = queue;
+
+  console.log(
+    `currentlyRenderingFiber: ${matrixnorm.fiberInfo(
+      currentlyRenderingFiber,
+    )}\n`,
+    `hook: ${util.inspect(hook)}\n`,
+    `initialState: ${initialState}`,
+  );
+
   return hook;
 }
 
 function mountState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
-  console.log(`initialState: ${initialState}`, matrixnorm.getStackTrace(5));
   const hook = mountStateImpl(initialState);
   const queue = hook.queue;
   const dispatch: Dispatch<BasicStateAction<S>> = (dispatchSetState.bind(
@@ -2877,6 +2885,14 @@ function mountTransition(): [
   );
   const hook = mountWorkInProgressHook();
   hook.memoizedState = start;
+
+  console.log(
+    `currentlyRenderingFiber: ${matrixnorm.fiberInfo(
+      currentlyRenderingFiber,
+    )}\n`,
+    `hook: ${util.inspect(hook)}\n`,
+  );
+
   return [false, start];
 }
 
@@ -3091,14 +3107,22 @@ function dispatchSetState<S, A>(
     next: (null: any),
   };
 
-  console.log(
-    ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
-    `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
-    `update: ${util.inspect(update)}\n`,
-    'fiber hooks: ',
-    util.inspect(fiber.memoizedState, {depth: 5}),
-    matrixnorm.getStackTrace(2),
-  );
+  {
+    const __hooks_list = matrixnorm.listHooks(fiber);
+    const __affected_hook_index = __hooks_list.findIndex(
+      h => h.queue === queue,
+    );
+
+    console.log(
+      ` fiber: ${matrixnorm.fiberInfo(fiber)}\n`,
+      `fiber.alternate: ${matrixnorm.fiberInfo(fiber.alternate)}\n`,
+      `update: ${util.inspect(update)}\n`,
+      'fiber hooks:\n',
+      util.inspect(__hooks_list, {depth: 5}),
+      `\naffected hook is ${__affected_hook_index}`,
+      matrixnorm.getStackTrace(4),
+    );
+  }
 
   if (isRenderPhaseUpdate(fiber)) {
     enqueueRenderPhaseUpdate(queue, update);
@@ -3152,6 +3176,10 @@ function dispatchSetState<S, A>(
     if (root !== null) {
       scheduleUpdateOnFiber(root, fiber, lane);
       entangleTransitionUpdate(root, queue, lane);
+      console.log(
+        '@@@ fiber hooks:\n',
+        util.inspect(matrixnorm.listHooks(fiber), {depth: 5}),
+      );
     }
   }
 
@@ -3244,6 +3272,7 @@ function entangleTransitionUpdate<S, A>(
   queue: UpdateQueue<S, A>,
   lane: Lane,
 ): void {
+  console.log({queueLanes: queue.lanes, lane});
   if (isTransitionLane(lane)) {
     let queueLanes = queue.lanes;
 
@@ -3252,10 +3281,12 @@ function entangleTransitionUpdate<S, A>(
     // represents a superset of the actually pending lanes. In some cases we
     // may entangle more than we need to, but that's OK. In fact it's worse if
     // we *don't* entangle when we should.
+    console.log({queueLanes, root_pendingLanes: root.pendingLanes});
     queueLanes = intersectLanes(queueLanes, root.pendingLanes);
-
+    console.log({queueLanes, lane});
     // Entangle the new transition lane with the other transition lanes.
     const newQueueLanes = mergeLanes(queueLanes, lane);
+    console.log({newQueueLanes});
     queue.lanes = newQueueLanes;
     // Even if queue.lanes already include lane, we don't know for certain if
     // the lane finished since the last time we entangled it. So we need to

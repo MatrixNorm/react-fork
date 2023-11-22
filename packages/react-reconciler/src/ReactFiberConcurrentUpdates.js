@@ -20,6 +20,7 @@ import type {Lane, Lanes} from './ReactFiberLane';
 import type {OffscreenInstance} from './ReactFiberOffscreenComponent';
 
 import * as matrixnorm from 'matrixnorm';
+import * as util from 'util';
 import {
   warnAboutUpdateOnNotYetMountedFiberInDEV,
   throwIfInfiniteUpdateLoopDetected,
@@ -88,7 +89,12 @@ export function finishQueueingConcurrentUpdates(): void {
       queue.pending = update;
     }
 
-    console.log(matrixnorm.fiberInfo(fiber), '\nhooks:\n', fiber.memoizedState);
+    console.log(
+      matrixnorm.fiberInfo(fiber),
+      '\nhooks:\n',
+      fiber.memoizedState.next &&
+        util.inspect(matrixnorm.listHooks(fiber), {depth: 5}),
+    );
 
     if (lane !== NoLane) {
       markUpdateLaneFromFiberToRoot(fiber, update, lane);
