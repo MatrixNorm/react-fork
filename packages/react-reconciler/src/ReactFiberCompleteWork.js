@@ -248,7 +248,6 @@ function appendAllChildren(
         continue;
       }
       if (node === workInProgress) {
-        console.log("faggot ".repeat(100))
         return;
       }
       // $FlowFixMe[incompatible-use] found when upgrading Flow

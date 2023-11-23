@@ -183,9 +183,11 @@ function flushWork(hasTimeRemaining: boolean, initialTime: number) {
       }
     } else {
       // No catch in prod code path.
+      console.log('------------------- enter work loop --------------------');
       return workLoop(hasTimeRemaining, initialTime);
     }
   } finally {
+    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
     currentTask = null;
     currentPriorityLevel = previousPriorityLevel;
     isPerformingWork = false;
@@ -225,7 +227,9 @@ function workLoop(hasTimeRemaining: boolean, initialTime: number): boolean {
         markTaskRun(currentTask, currentTime);
       }
       const continuationCallback = callback(didUserCallbackTimeout);
-      console.log({continuationCallback});
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$', {
+        continuationCallback,
+      });
       currentTime = getCurrentTime();
       if (typeof continuationCallback === 'function') {
         // If a continuation is returned, immediately yield to the main thread
@@ -262,6 +266,7 @@ function workLoop(hasTimeRemaining: boolean, initialTime: number): boolean {
       pop(taskQueue);
     }
     currentTask = peek(taskQueue);
+    console.log('taskQueue: ', taskQueue, 'currentTask: ', currentTask);
   }
   // Return whether there's additional work
   if (currentTask !== null) {
@@ -529,7 +534,12 @@ function reset() {
 
 // Should only be used via an assertion helper that inspects the yielded values.
 function unstable_flushNumberOfYields(count: number): void {
-  console.log('flushNumberOfYields ', count);
+  console.log(
+    ' -------------------\n',
+    'flushNumberOfYields\n',
+    '-------------------\n',
+    {count},
+  );
   if (isFlushing) {
     throw new Error('Already flushing work.');
   }

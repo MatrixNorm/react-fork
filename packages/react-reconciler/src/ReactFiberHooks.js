@@ -1184,10 +1184,11 @@ function updateReducerImpl<S, A>(
   reducer: (S, A) => S,
 ): [S, Dispatch<A>] {
   console.log(
+    '111 111 111',
     'hook:\n',
-    hook,
+    util.inspect(hook, {depth: 5}),
     '\ncurrent:\n',
-    current,
+    util.inspect(current, {depth: 5}),
     '\nhook === current: ',
     hook === current,
     '\nhook.queue === current.queue: ',
@@ -1234,10 +1235,11 @@ function updateReducerImpl<S, A>(
   }
 
   console.log(
+    '222 222 222',
     'hook:\n',
-    hook,
+    util.inspect(hook, {depth: 5}),
     '\ncurrent:\n',
-    current,
+    util.inspect(current, {depth: 5}),
     '\nhook.queue === current.queue: ',
     hook.queue === current.queue,
   );

@@ -321,7 +321,7 @@ function scheduleTaskForRootDuringMicrotask(
   );
 
   console.log({nextLanes});
-
+  
   const existingCallbackNode = root.callbackNode;
   if (
     // Check if there's nothing to work on
@@ -343,7 +343,7 @@ function scheduleTaskForRootDuringMicrotask(
     root.callbackPriority = NoLane;
     return NoLane;
   }
-
+  
   // Schedule a new callback in the host environment.
   if (includesSyncLane(nextLanes)) {
     console.log('nextLanes includes SyncLane');
@@ -359,7 +359,7 @@ function scheduleTaskForRootDuringMicrotask(
     // We use the highest priority lane to represent the priority of the callback.
     const existingCallbackPriority = root.callbackPriority;
     const newCallbackPriority = getHighestPriorityLane(nextLanes);
-
+    console.log({newCallbackPriority, existingCallbackPriority});
     if (
       newCallbackPriority === existingCallbackPriority &&
       // Special case related to `act`. If the currently scheduled task is a
@@ -400,7 +400,7 @@ function scheduleTaskForRootDuringMicrotask(
         schedulerPriorityLevel = NormalSchedulerPriority;
         break;
     }
-
+    console.log("Schedule callback :moose:")
     const newCallbackNode = scheduleCallback(
       schedulerPriorityLevel,
       performConcurrentWorkOnRoot.bind(null, root),
@@ -408,7 +408,6 @@ function scheduleTaskForRootDuringMicrotask(
 
     root.callbackPriority = newCallbackPriority;
 
-    console.log('set root.callbackNode to newCallbackNode');
     root.callbackNode = newCallbackNode;
     return newCallbackPriority;
   }
@@ -432,6 +431,8 @@ export function getContinuationForRoot(
   if (root.callbackNode === originalCallbackNode) {
     // The task node scheduled for this root is the same one that's
     // currently executed. Need to return a continuation.
+    console.log(`The task node scheduled for this root is the same one that's
+     currently executed. Need to return a continuation.`);
     return performConcurrentWorkOnRoot.bind(null, root);
   }
   return null;
