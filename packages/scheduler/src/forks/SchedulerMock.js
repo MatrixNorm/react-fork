@@ -697,6 +697,12 @@ function unstable_advanceTime(ms: number) {
 }
 
 function requestPaint() {
+  console.log(
+    `---------------\n
+      requestPaint\n
+    ----------------`,
+    matrixnorm.getStackTrace(5),
+  );
   needsPaint = true;
 }
 

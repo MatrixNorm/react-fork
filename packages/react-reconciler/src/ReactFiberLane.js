@@ -200,10 +200,10 @@ function getHighestPriorityLanes(lanes: Lanes | Lane): Lanes {
 }
 
 export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
-  console.log(matrixnorm.getStackTrace(5));
+  console.log({wipLanes}, matrixnorm.getStackTrace(5));
   // Early bailout if there's no pending work left.
   const pendingLanes = root.pendingLanes;
-  console.log({pendingLanes, wipLanes});
+  //console.log({pendingLanes, wipLanes});
   if (pendingLanes === NoLanes) {
     return NoLanes;
   }
@@ -216,10 +216,10 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   // Do not work on any idle work until all the non-idle work has finished,
   // even if the work is suspended.
   const nonIdlePendingLanes = pendingLanes & NonIdleLanes; // 0b0001111111111111111111111111111
-  console.log({nonIdlePendingLanes, nextLanes, suspendedLanes, pingedLanes});
+  //console.log({nonIdlePendingLanes, nextLanes, suspendedLanes, pingedLanes});
   if (nonIdlePendingLanes !== NoLanes) {
     const nonIdleUnblockedLanes = nonIdlePendingLanes & ~suspendedLanes;
-    console.log({nonIdleUnblockedLanes});
+    //console.log({nonIdleUnblockedLanes});
     if (nonIdleUnblockedLanes !== NoLanes) {
       nextLanes = getHighestPriorityLanes(nonIdleUnblockedLanes);
     } else {
@@ -239,7 +239,7 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
       }
     }
   }
-  console.log({nextLanes});
+  //console.log({nextLanes});
 
   if (nextLanes === NoLanes) {
     // This should only be reachable if we're suspended
@@ -279,14 +279,14 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   ) {
     // Do nothing, use the lanes as they were assigned.
   } else if ((nextLanes & InputContinuousLane) !== NoLanes) {
-    console.log({InputContinuousLane});
+    //console.log({InputContinuousLane});
     // When updates are sync by default, we entangle continuous priority updates
     // and default updates, so they render in the same batch. The only reason
     // they use separate lanes is because continuous updates should interrupt
     // transitions, but default updates should not.
     nextLanes |= pendingLanes & DefaultLane;
   }
-  console.log({nextLanes});
+  //console.log({nextLanes});
 
   // Check for entangled lanes and add them to the batch.
   //
@@ -314,7 +314,7 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   if (entangledLanes !== NoLanes) {
     const entanglements = root.entanglements;
     let lanes = nextLanes & entangledLanes;
-    console.log({entangledLanes, nextLanes, lanes, entanglements});
+    //console.log({entangledLanes, nextLanes, lanes, entanglements});
     while (lanes > 0) {
       const index = pickArbitraryLaneIndex(lanes);
       const lane = 1 << index;

@@ -60,7 +60,12 @@ describe('force concurrent render', () => {
         });
       };
 
-      return <div>{count}</div>;
+      return (
+        <div>
+          <p>{count}</p>
+          <h1>{isPending.toString()}</h1>
+        </div>
+      );
     }
 
     return [App, actions];
@@ -104,6 +109,7 @@ describe('force concurrent render', () => {
     actions.incrementCount();
     console.log('SCHEDULE RENDER');
     await __queue(3);
+
     console.log(document.body.innerHTML);
     console.log('end of test');
   });
@@ -116,10 +122,27 @@ describe('force concurrent render', () => {
     await __queue(3);
     enableLogging();
 
+    //global.__matrixnorm_force_concurrent_yield_to_host = true;
     Scheduler.unstable_flushUntilNextPaint();
     await __queue(4);
     // Scheduler.unstable_flushUntilNextPaint();
     // await __queue(5);
+    console.log(document.body.innerHTML);
+    console.log('end of test');
+  });
+
+  it('t4', async () => {
+    const enableLogging = disableLogging();
+    const actions = await scheduleMount();
+    await executeMount();
+    actions.incrementCount();
+    await __queue(3);
+    Scheduler.unstable_flushUntilNextPaint();
+    await __queue(4);
+    enableLogging();
+    console.log(document.body.innerHTML);
+    Scheduler.unstable_flushUntilNextPaint();
+    await __queue(5);
     console.log(document.body.innerHTML);
     console.log('end of test');
   });

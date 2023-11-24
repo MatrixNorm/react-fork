@@ -1180,6 +1180,7 @@ function finishConcurrentRender(
         tree2XML({hostRoot: root.current}),
         '\nWIP tree:\n',
         tree2XML({hostRoot: root.current.alternate}),
+        document.body.innerHTML
       );
     }
 
@@ -1200,6 +1201,7 @@ function finishConcurrentRender(
         tree2XML({hostRoot}),
         '\nWIP tree:\n',
         hostRoot.alternate && tree2XML({hostRoot: hostRoot.alternate}),
+        document.body.innerHTML
       );
 
       console.log(
@@ -2291,10 +2293,12 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
 
 /** @noinline */
 function workLoopConcurrent() {
+  console.log("bear")
   // Perform work until Scheduler asks us to yield
   while (workInProgress !== null && !shouldYield()) {
     // $FlowFixMe[incompatible-call] found when upgrading Flow
     performUnitOfWork(workInProgress);
+    //global.__matrixnorm_force_concurrent_yield_to_host && requestPaint() 
   }
 }
 
